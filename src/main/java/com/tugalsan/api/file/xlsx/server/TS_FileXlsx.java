@@ -1,5 +1,7 @@
 package com.tugalsan.api.file.xlsx.server;
 
+import com.tugalsan.api.charset.client.*;
+import com.tugalsan.api.coronator.client.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -12,6 +14,8 @@ import com.tugalsan.api.list.client.*;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.file.server.*;
 import com.tugalsan.api.string.client.*;
+import com.tugalsan.api.unsafe.client.*;
+import java.util.stream.*;
 
 public class TS_FileXlsx implements Closeable {
 
@@ -351,31 +355,31 @@ public class TS_FileXlsx implements Closeable {
     }
 
     public CellRangeAddress createMergedCell(int rowFrom, int rowTo, int colFrom, int colTo, boolean ignoreExceptions) {
-        try {
+        return TGS_UnSafe.compile(() -> {
             d.ci("createMergedCell rf:" + rowFrom + ", rt:" + rowTo + ", cf:" + colFrom + ", ct:" + colTo);
             var rangeAddress = new CellRangeAddress(rowFrom, rowTo, colFrom, colTo);
             sheet.addMergedRegion(rangeAddress);
             return rangeAddress;
-        } catch (Exception e) {
+        }, e -> {
             if (ignoreExceptions) {
                 return null;
-            } else {
-                throw new RuntimeException(e);
             }
-        }
+            return TGS_UnSafe.catchMeIfUCanReturns(e);
+        });
     }
 
     public void setBordersToMergedCell(CellRangeAddress rangeAddress, boolean ignoreExceptions) {
-        try {
+        TGS_UnSafe.execute(() -> {
             RegionUtil.setBorderTop(BorderStyle.MEDIUM, rangeAddress, sheet);
             RegionUtil.setBorderLeft(BorderStyle.MEDIUM, rangeAddress, sheet);
             RegionUtil.setBorderRight(BorderStyle.MEDIUM, rangeAddress, sheet);
             RegionUtil.setBorderBottom(BorderStyle.MEDIUM, rangeAddress, sheet);
-        } catch (Exception e) {
-            if (!ignoreExceptions) {
-                throw new RuntimeException(e);
+        }, e -> {
+            if (ignoreExceptions) {
+                return;
             }
-        }
+            TGS_UnSafe.catchMeIfUCanReturns(e);
+        });
     }
 
     @Override
@@ -384,91 +388,84 @@ public class TS_FileXlsx implements Closeable {
     }
 
     public void close(boolean ignoreExceptions) {
-        try ( var fileOut = new FileOutputStream(filePath.toFile())) {
-            workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
-            workbook.write(fileOut);
-        } catch (Exception e) {
-            if (!ignoreExceptions) {
-                throw new RuntimeException(e);
+        TGS_UnSafe.execute(() -> {
+            try ( var fileOut = new FileOutputStream(filePath.toFile())) {
+                workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+                workbook.write(fileOut);
             }
-        }
+        }, e -> {
+            if (ignoreExceptions) {
+                return;
+            }
+            TGS_UnSafe.catchMeIfUCanReturns(e);
+        });
     }
 
     public void addImage(CharSequence imgFile, int rowIdx, int colIdx, int colspan) {
-        var imgFileStr = imgFile.toString();
-        try {
-            Integer format = null;
-            if (imgFileStr.endsWith(".emf")) {
-                format = Workbook.PICTURE_TYPE_EMF;
-            } else if (imgFileStr.toLowerCase(Locale.ROOT).endsWith(".wmf") || imgFileStr.toLowerCase(Locale.ROOT).endsWith(".wmf")) {
-                format = Workbook.PICTURE_TYPE_WMF;
-            } else if (imgFileStr.toLowerCase(Locale.ROOT).endsWith(".pict") || imgFileStr.toLowerCase(Locale.ROOT).endsWith(".pict")) {
-                format = Workbook.PICTURE_TYPE_PICT;
-            } else if (imgFileStr.toLowerCase(Locale.ROOT).endsWith(".pıct") || imgFileStr.toLowerCase(Locale.ROOT).endsWith(".pıct")) {
-                format = Workbook.PICTURE_TYPE_PICT;
-            } else if (imgFileStr.toLowerCase(Locale.ROOT).endsWith(".jpeg") || imgFileStr.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
-                format = Workbook.PICTURE_TYPE_JPEG;
-            } else if (imgFileStr.toLowerCase(Locale.ROOT).endsWith(".jpg") || imgFileStr.toLowerCase(Locale.ROOT).endsWith(".jpg")) {
-                format = Workbook.PICTURE_TYPE_JPEG;
-            } else if (imgFileStr.toLowerCase(Locale.ROOT).endsWith(".png") || imgFileStr.toLowerCase(Locale.ROOT).endsWith(".png")) {
-                format = Workbook.PICTURE_TYPE_PNG;
-            } else if (imgFileStr.toLowerCase(Locale.ROOT).endsWith(".dib") || imgFileStr.toLowerCase(Locale.ROOT).endsWith(".dib")) {
-                format = Workbook.PICTURE_TYPE_DIB;
-            } else if (imgFileStr.toLowerCase(Locale.ROOT).endsWith(".dıb") || imgFileStr.toLowerCase(Locale.ROOT).endsWith(".dıb")) {
-                format = Workbook.PICTURE_TYPE_DIB;
-            }
+        TGS_UnSafe.execute(() -> {
+            var imgFileStr = imgFile.toString();
+            var imgFileStrLc0 = TGS_CharacterSets.toLowerCase_TR(imgFileStr);
+            var imgFileStrLc1 = imgFileStr.toLowerCase();
+            var format = TGS_Coronator.ofInt()
+                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".emf") || imgFileStrLc1.endsWith(".wmf"), val -> Workbook.PICTURE_TYPE_EMF)
+                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".wmf") || imgFileStrLc1.endsWith(".wmf"), val -> Workbook.PICTURE_TYPE_WMF)
+                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".pict") || imgFileStrLc1.endsWith(".pict"), val -> Workbook.PICTURE_TYPE_PICT)
+                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".pıct") || imgFileStrLc1.endsWith(".pıct"), val -> Workbook.PICTURE_TYPE_PICT)
+                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".jpeg") || imgFileStrLc1.endsWith(".jpeg"), val -> Workbook.PICTURE_TYPE_JPEG)
+                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".jpg") || imgFileStrLc1.endsWith(".jpg"), val -> Workbook.PICTURE_TYPE_JPEG)
+                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".png") || imgFileStrLc1.endsWith(".png"), val -> Workbook.PICTURE_TYPE_PNG)
+                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".dib") || imgFileStrLc1.endsWith(".dib"), val -> Workbook.PICTURE_TYPE_DIB)
+                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".dıb") || imgFileStrLc1.endsWith(".dıb"), val -> Workbook.PICTURE_TYPE_DIB)
+                    .coronate();
             if (format == null) {
                 d.ce("addImage.Unsupported picture: " + imgFileStr + ". Expected emf|wmf|pict|jpeg|png|dib|gif|tiff|eps|bmp|wpg");
-            } else {
+                return;
+            }
 //        r.setText(imgFile);
 //        r.addBreak();
-                d.ci("addImage.INFO: TK_XLSXFile.run.addPicture.BEGIN...");
-                var pictureIdx = workbook.addPicture(TS_FileUtils.read(Path.of(imgFileStr)), format);
+            d.ci("addImage.INFO: TK_XLSXFile.run.addPicture.BEGIN...");
+            var pictureIdx = workbook.addPicture(TS_FileUtils.read(Path.of(imgFileStr)), format);
 
-                var helper = workbook.getCreationHelper();
-                var anchor = helper.createClientAnchor();
-                anchor.setCol1(colIdx);
-                anchor.setRow1(rowIdx);
+            var helper = workbook.getCreationHelper();
+            var anchor = helper.createClientAnchor();
+            anchor.setCol1(colIdx);
+            anchor.setRow1(rowIdx);
 
-                var drawing = sheet.createDrawingPatriarch();
-                var pict = drawing.createPicture(anchor, pictureIdx);
-                pict.resize();//resize to original size
-                d.ci("addImage: w:" + pict.getImageDimension().getWidth() + ", h:" + pict.getImageDimension().getHeight() + ", l:" + imgFileStr);
+            var drawing = sheet.createDrawingPatriarch();
+            var pict = drawing.createPicture(anchor, pictureIdx);
+            pict.resize();//resize to original size
+            d.ci("addImage: w:" + pict.getImageDimension().getWidth() + ", h:" + pict.getImageDimension().getHeight() + ", l:" + imgFileStr);
 
-                //get calculate width center 
-                var pictWidthPx = pict.getImageDimension().width;
-                d.ci("addImage.pictWidthPx:" + pictWidthPx);
-                var cellWidthPx = 0;
-                for (var ci = 0; ci < colspan; ci++) {
-                    cellWidthPx += Math.round(DEFAULT_COLUMNWIDTH_INPX());
+            //get calculate width center 
+            var pictWidthPx = pict.getImageDimension().width;
+            d.ci("addImage.pictWidthPx:" + pictWidthPx);
+            var cellWidthPx = IntStream.range(0, colspan)
+                    .mapToLong(ci -> Math.round(DEFAULT_COLUMNWIDTH_INPX()))
+                    .sum();
+            d.ci("addImage.cellWidthPx:" + cellWidthPx);
+            var centerPosPx = Math.round(cellWidthPx / 2d - pictWidthPx / 2d);
+            d.ci("addImage.centerPosPx:" + centerPosPx);
+            d.ci("addImage.pictWidthPx:" + pictWidthPx + ", cellWidthPx:" + cellWidthPx + ", centerPosPx:" + centerPosPx);
+
+            //determine the new first anchor column dependent of the center position 
+            //and the remaining pixels as Dx
+            var anchorCol1 = 0;
+            for (var ci = 0; ci < colspan; ci++) {
+                if (Math.round(DEFAULT_COLUMNWIDTH_INPX()) < centerPosPx) {
+                    centerPosPx -= Math.round(DEFAULT_COLUMNWIDTH_INPX());
+                    anchorCol1 = ci + 1;
+                } else {
+                    break;
                 }
-                d.ci("addImage.cellWidthPx:" + cellWidthPx);
-                var centerPosPx = Math.round(cellWidthPx / 2d - pictWidthPx / 2d);
-                d.ci("addImage.centerPosPx:" + centerPosPx);
-                d.ci("addImage.pictWidthPx:" + pictWidthPx + ", cellWidthPx:" + cellWidthPx + ", centerPosPx:" + centerPosPx);
-
-                //determine the new first anchor column dependent of the center position 
-                //and the remaining pixels as Dx
-                var anchorCol1 = 0;
-                for (int ci = 0; ci < colspan; ci++) {
-                    if (Math.round(DEFAULT_COLUMNWIDTH_INPX()) < centerPosPx) {
-                        centerPosPx -= Math.round(DEFAULT_COLUMNWIDTH_INPX());
-                        anchorCol1 = ci + 1;
-                    } else {
-                        break;
-                    }
-                }
-                d.ci("addImage.anchorCol1:" + anchorCol1);
-                d.ci("addImage.centerPosPx:" + centerPosPx);
-
-                anchor.setCol1(anchorCol1 < 0 ? 0 : anchorCol1);//set the new upper left anchor position
-                anchor.setDx1((int) (centerPosPx * Units.EMU_PER_PIXEL));//set the remaining pixels up to the center position as Dx in unit EMU
-                pict.resize(); //resize the pictutre to original size again; this will determine the new bottom rigth anchor position
-                d.ci("addImage.END");
             }
-        } catch (Exception e) {
-            throw new RuntimeException("ERROR: TK_XLSXFile.run.addPicture -> e:" + e.getMessage(), e);
-        }
+            d.ci("addImage.anchorCol1:" + anchorCol1);
+            d.ci("addImage.centerPosPx:" + centerPosPx);
+
+            anchor.setCol1(anchorCol1 < 0 ? 0 : anchorCol1);//set the new upper left anchor position
+            anchor.setDx1((int) (centerPosPx * Units.EMU_PER_PIXEL));//set the remaining pixels up to the center position as Dx in unit EMU
+            pict.resize(); //resize the pictutre to original size again; this will determine the new bottom rigth anchor position
+            d.ci("addImage.END");
+        });
     }
 
     public void setCell(int ri, int ci, CellStyle cs, List<Font> font, List<String> text) {

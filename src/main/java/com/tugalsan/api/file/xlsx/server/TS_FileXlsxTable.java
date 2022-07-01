@@ -8,6 +8,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.tugalsan.api.list.client.TGS_ListTable;
 import com.tugalsan.api.file.html.client.TGS_FileHtmlUtils;
+import com.tugalsan.api.unsafe.client.*;
 
 public class TS_FileXlsxTable extends TGS_ListTable {
 
@@ -29,38 +30,39 @@ public class TS_FileXlsxTable extends TGS_ListTable {
     }
 
     public static StringBuffer toHTML(Path destXLSX) {
-        try ( var is = Files.newInputStream(destXLSX)) {
-            var FILE_TYPES = new String[]{"xls", "xlsx"};
-            var NEW_LINE = "\n";
-            var HTML_TR_S = "<tr>";
-            var HTML_TR_E = "</tr>";
-            var HTML_TD_S = "<td>";
-            var HTML_TD_E = "</td>";
-            boolean isXLS = destXLSX.toAbsolutePath().toString().toLowerCase(Locale.ROOT).endsWith(FILE_TYPES[0]);
-            if (isXLS) {
-                try ( var workbook = new HSSFWorkbook(is);) {
-                    var sb = new StringBuffer();
-                    sb.append(TGS_FileHtmlUtils.beginLines(destXLSX.toString(), false, true, 5, 5, null, false));
-                    sb.append("<table>");
-                    var sheet = workbook.getSheetAt(0);
-                    var rows = sheet.rowIterator();
-                    rows.forEachRemaining(row -> {
-                        var cells = row.cellIterator();
-                        sb.append(NEW_LINE);
-                        sb.append(HTML_TR_S);
-                        cells.forEachRemaining(cell -> {
-                            sb.append(HTML_TD_S);
-                            sb.append(cell.toString());
-                            sb.append(HTML_TD_E);
+        return TGS_UnSafe.compile(() -> {
+            try ( var is = Files.newInputStream(destXLSX)) {
+                var FILE_TYPES = new String[]{"xls", "xlsx"};
+                var NEW_LINE = "\n";
+                var HTML_TR_S = "<tr>";
+                var HTML_TR_E = "</tr>";
+                var HTML_TD_S = "<td>";
+                var HTML_TD_E = "</td>";
+                boolean isXLS = destXLSX.toAbsolutePath().toString().toLowerCase(Locale.ROOT).endsWith(FILE_TYPES[0]);
+                if (isXLS) {
+                    try ( var workbook = new HSSFWorkbook(is);) {
+                        var sb = new StringBuffer();
+                        sb.append(TGS_FileHtmlUtils.beginLines(destXLSX.toString(), false, true, 5, 5, null, false));
+                        sb.append("<table>");
+                        var sheet = workbook.getSheetAt(0);
+                        var rows = sheet.rowIterator();
+                        rows.forEachRemaining(row -> {
+                            var cells = row.cellIterator();
+                            sb.append(NEW_LINE);
+                            sb.append(HTML_TR_S);
+                            cells.forEachRemaining(cell -> {
+                                sb.append(HTML_TD_S);
+                                sb.append(cell.toString());
+                                sb.append(HTML_TD_E);
+                            });
+                            sb.append(HTML_TR_E);
                         });
-                        sb.append(HTML_TR_E);
-                    });
-                    sb.append(NEW_LINE);
-                    sb.append("<table>");
-                    sb.append(TGS_FileHtmlUtils.endLines(false));
-                    return sb;
+                        sb.append(NEW_LINE);
+                        sb.append("<table>");
+                        sb.append(TGS_FileHtmlUtils.endLines(false));
+                        return sb;
+                    }
                 }
-            } else {
                 try ( var workbook = new XSSFWorkbook(is);) {
                     var sb = new StringBuffer();
                     sb.append(TGS_FileHtmlUtils.beginLines(destXLSX.toString(), false, true, 5, 5, null, false));
@@ -84,8 +86,6 @@ public class TS_FileXlsxTable extends TGS_ListTable {
                     return sb;
                 }
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        });
     }
 }
