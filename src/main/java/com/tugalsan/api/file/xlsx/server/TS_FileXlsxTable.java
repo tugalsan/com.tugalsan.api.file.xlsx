@@ -42,7 +42,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
                 if (isXLS) {
                     try ( var workbook = new HSSFWorkbook(is);) {
                         var sb = new StringBuffer();
-                        sb.append(TGS_FileHtmlUtils.beginLines(destXLSX.toString(), false, true, 5, 5, null, false, optionalCustomDomain));
+                        sb.append(TGS_FileHtmlUtils.beginLines(destXLSX.toString(), true, false, 5, 5, null, false, optionalCustomDomain));
                         sb.append("<table>");
                         var sheet = workbook.getSheetAt(0);
                         var rows = sheet.rowIterator();
@@ -65,7 +65,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
                 }
                 try ( var workbook = new XSSFWorkbook(is);) {
                     var sb = new StringBuffer();
-                    sb.append(TGS_FileHtmlUtils.beginLines(destXLSX.toString(), false, true, 5, 5, null, false, optionalCustomDomain));
+                    sb.append(TGS_FileHtmlUtils.beginLines(destXLSX.toString(), true, false, 5, 5, null, false, optionalCustomDomain));
                     sb.append("<table>");
                     var sheet = workbook.getSheetAt(0);
                     var rows = sheet.rowIterator();
