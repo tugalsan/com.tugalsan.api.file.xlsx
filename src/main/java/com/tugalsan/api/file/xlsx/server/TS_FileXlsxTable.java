@@ -16,6 +16,10 @@ public class TS_FileXlsxTable extends TGS_ListTable {
         return toFile(this, destXLSX);
     }
 
+    public TS_FileXlsxTable ofXlsx() {
+        return new TS_FileXlsxTable();
+    }
+
     public static boolean toFile(TGS_ListTable table, Path destXLSX) {
         try ( var xlsx = new TS_FileXlsx(destXLSX);) {
             var fBold = xlsx.createFont(true, false, false);
