@@ -16,7 +16,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
         return toFile(this, destXLSX);
     }
 
-    public TS_FileXlsxTable ofXlsx() {
+    public static TS_FileXlsxTable ofXlsx() {
         return new TS_FileXlsxTable();
     }
 
