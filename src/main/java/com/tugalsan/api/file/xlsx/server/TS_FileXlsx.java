@@ -404,7 +404,7 @@ public class TS_FileXlsx implements Closeable {
     public void addImage(CharSequence imgFile, int rowIdx, int colIdx, int colspan) {
         TGS_UnSafe.execute(() -> {
             var imgFileStr = imgFile.toString();
-            var imgFileStrLc0 = TGS_CharSet.toLowerCase_TR(imgFileStr);
+            var imgFileStrLc0 = TGS_CharSetCast.toLowerCaseFixed(imgFileStr);
             var imgFileStrLc1 = imgFileStr.toLowerCase();
             var format = TGS_Coronator.ofInt()
                     .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".emf") || imgFileStrLc1.endsWith(".wmf"), val -> Workbook.PICTURE_TYPE_EMF)
