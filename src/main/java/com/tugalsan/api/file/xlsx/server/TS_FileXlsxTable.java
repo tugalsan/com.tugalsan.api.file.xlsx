@@ -1,8 +1,8 @@
 package com.tugalsan.api.file.xlsx.server;
 
+import com.tugalsan.api.charset.client.TGS_CharSetCast;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Locale;
 import java.util.stream.IntStream;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -21,7 +21,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
     }
 
     public static boolean toFile(TGS_ListTable table, Path destXLSX) {
-        try ( var xlsx = new TS_FileXlsx(destXLSX);) {
+        try (var xlsx = new TS_FileXlsx(destXLSX);) {
             var fBold = xlsx.createFont(true, false, false);
             var fPlain = xlsx.createFont(false, false, false);
             IntStream.range(0, table.getRowSize()).forEachOrdered(ri -> {
@@ -35,16 +35,16 @@ public class TS_FileXlsxTable extends TGS_ListTable {
 
     public static StringBuffer toHTML(Path destXLSX, CharSequence optionalCustomDomain) {
         return TGS_UnSafe.compile(() -> {
-            try ( var is = Files.newInputStream(destXLSX)) {
+            try (var is = Files.newInputStream(destXLSX)) {
                 var FILE_TYPES = new String[]{"xls", "xlsx"};
                 var NEW_LINE = "\n";
                 var HTML_TR_S = "<tr>";
                 var HTML_TR_E = "</tr>";
                 var HTML_TD_S = "<td>";
                 var HTML_TD_E = "</td>";
-                boolean isXLS = destXLSX.toAbsolutePath().toString().toLowerCase(Locale.ROOT).endsWith(FILE_TYPES[0]);
+                var isXLS = TGS_CharSetCast.toLocaleLowerCase(destXLSX.toAbsolutePath().toString()).endsWith(FILE_TYPES[0]);
                 if (isXLS) {
-                    try ( var workbook = new HSSFWorkbook(is);) {
+                    try (var workbook = new HSSFWorkbook(is);) {
                         var sb = new StringBuffer();
                         sb.append(TGS_FileHtmlUtils.beginLines(destXLSX.toString(), true, false, 5, 5, null, false, optionalCustomDomain));
                         sb.append("<table>");
@@ -67,7 +67,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
                         return sb;
                     }
                 }
-                try ( var workbook = new XSSFWorkbook(is);) {
+                try (var workbook = new XSSFWorkbook(is);) {
                     var sb = new StringBuffer();
                     sb.append(TGS_FileHtmlUtils.beginLines(destXLSX.toString(), true, false, 5, 5, null, false, optionalCustomDomain));
                     sb.append("<table>");

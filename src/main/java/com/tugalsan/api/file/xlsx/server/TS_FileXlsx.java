@@ -389,7 +389,7 @@ public class TS_FileXlsx implements Closeable {
 
     public void close(boolean ignoreExceptions) {
         TGS_UnSafe.execute(() -> {
-            try ( var fileOut = new FileOutputStream(filePath.toFile())) {
+            try (var fileOut = new FileOutputStream(filePath.toFile())) {
                 workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
                 workbook.write(fileOut);
             }
@@ -404,18 +404,14 @@ public class TS_FileXlsx implements Closeable {
     public void addImage(CharSequence imgFile, int rowIdx, int colIdx, int colspan) {
         TGS_UnSafe.execute(() -> {
             var imgFileStr = imgFile.toString();
-            var imgFileStrLc0 = TGS_CharSetCast.toLowerCase(imgFileStr);
-            var imgFileStrLc1 = imgFileStr.toLowerCase();
+            var imgFileStrLc = TGS_CharSetCast.toLocaleLowerCase(imgFileStr);
             var format = TGS_Coronator.ofInt()
-                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".emf") || imgFileStrLc1.endsWith(".wmf"), val -> Workbook.PICTURE_TYPE_EMF)
-                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".wmf") || imgFileStrLc1.endsWith(".wmf"), val -> Workbook.PICTURE_TYPE_WMF)
-                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".pict") || imgFileStrLc1.endsWith(".pict"), val -> Workbook.PICTURE_TYPE_PICT)
-                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".pıct") || imgFileStrLc1.endsWith(".pıct"), val -> Workbook.PICTURE_TYPE_PICT)
-                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".jpeg") || imgFileStrLc1.endsWith(".jpeg"), val -> Workbook.PICTURE_TYPE_JPEG)
-                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".jpg") || imgFileStrLc1.endsWith(".jpg"), val -> Workbook.PICTURE_TYPE_JPEG)
-                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".png") || imgFileStrLc1.endsWith(".png"), val -> Workbook.PICTURE_TYPE_PNG)
-                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".dib") || imgFileStrLc1.endsWith(".dib"), val -> Workbook.PICTURE_TYPE_DIB)
-                    .anointAndCoronateIf(val -> imgFileStrLc0.endsWith(".dıb") || imgFileStrLc1.endsWith(".dıb"), val -> Workbook.PICTURE_TYPE_DIB)
+                    .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".emf"), val -> Workbook.PICTURE_TYPE_EMF)
+                    .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".wmf"), val -> Workbook.PICTURE_TYPE_WMF)
+                    .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".png"), val -> Workbook.PICTURE_TYPE_PNG)
+                    .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".jpeg") || imgFileStrLc.endsWith(".jpg"), val -> Workbook.PICTURE_TYPE_JPEG)
+                    .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".pict") || imgFileStrLc.endsWith(".pıct"), val -> Workbook.PICTURE_TYPE_PICT)
+                    .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".dib") || imgFileStrLc.endsWith(".dıb"), val -> Workbook.PICTURE_TYPE_DIB)
                     .coronate();
             if (format == null) {
                 d.ce("addImage.Unsupported picture: " + imgFileStr + ". Expected emf|wmf|pict|jpeg|png|dib|gif|tiff|eps|bmp|wpg");
