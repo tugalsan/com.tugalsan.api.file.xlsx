@@ -34,7 +34,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
     }
 
     public static StringBuffer toHTML(Path destXLSX, CharSequence optionalCustomDomain) {
-        return TGS_UnSafe.compile(() -> {
+        return TGS_UnSafe.call(() -> {
             try (var is = Files.newInputStream(destXLSX)) {
                 var FILE_TYPES = new String[]{"xls", "xlsx"};
                 var NEW_LINE = "\n";

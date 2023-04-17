@@ -355,7 +355,7 @@ public class TS_FileXlsx implements Closeable {
     }
 
     public CellRangeAddress createMergedCell(int rowFrom, int rowTo, int colFrom, int colTo, boolean ignoreExceptions) {
-        return TGS_UnSafe.compile(() -> {
+        return TGS_UnSafe.call(() -> {
             d.ci("createMergedCell rf:" + rowFrom + ", rt:" + rowTo + ", cf:" + colFrom + ", ct:" + colTo);
             var rangeAddress = new CellRangeAddress(rowFrom, rowTo, colFrom, colTo);
             sheet.addMergedRegion(rangeAddress);
@@ -364,12 +364,12 @@ public class TS_FileXlsx implements Closeable {
             if (ignoreExceptions) {
                 return null;
             }
-            return TGS_UnSafe.catchMeIfUCanReturns(e);
+            return TGS_UnSafe.thrwReturns(e);
         });
     }
 
     public void setBordersToMergedCell(CellRangeAddress rangeAddress, boolean ignoreExceptions) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             RegionUtil.setBorderTop(BorderStyle.MEDIUM, rangeAddress, sheet);
             RegionUtil.setBorderLeft(BorderStyle.MEDIUM, rangeAddress, sheet);
             RegionUtil.setBorderRight(BorderStyle.MEDIUM, rangeAddress, sheet);
@@ -378,7 +378,7 @@ public class TS_FileXlsx implements Closeable {
             if (ignoreExceptions) {
                 return;
             }
-            TGS_UnSafe.catchMeIfUCanReturns(e);
+            TGS_UnSafe.thrwReturns(e);
         });
     }
 
@@ -388,7 +388,7 @@ public class TS_FileXlsx implements Closeable {
     }
 
     public void close(boolean ignoreExceptions) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             try (var fileOut = new FileOutputStream(filePath.toFile())) {
                 workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
                 workbook.write(fileOut);
@@ -397,12 +397,12 @@ public class TS_FileXlsx implements Closeable {
             if (ignoreExceptions) {
                 return;
             }
-            TGS_UnSafe.catchMeIfUCanReturns(e);
+            TGS_UnSafe.thrwReturns(e);
         });
     }
 
     public void addImage(CharSequence imgFile, int rowIdx, int colIdx, int colspan) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             var imgFileStr = imgFile.toString();
             var imgFileStrLc = TGS_CharSetCast.toLocaleLowerCase(imgFileStr);
             var format = TGS_Coronator.ofInt()
