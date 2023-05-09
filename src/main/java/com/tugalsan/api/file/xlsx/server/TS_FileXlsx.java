@@ -270,7 +270,7 @@ public class TS_FileXlsx implements Closeable {
     }
 
     public RichTextString createRichText(List<String> texts, List<Font> fonts) {
-        TGS_ListCleanUtils.cleanEmptyOrNulls(texts, i -> fonts.remove(i));
+        TGS_ListCleanUtils.cleanNulls(texts, i -> fonts.remove(i));
         var sb = new StringBuilder();
         texts.stream().forEachOrdered(s -> sb.append(s));
         var text = sb.toString();
