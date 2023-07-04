@@ -15,6 +15,7 @@ import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.file.server.*;
 import com.tugalsan.api.string.client.*;
 import com.tugalsan.api.unsafe.client.*;
+import java.awt.Font;
 import java.util.stream.*;
 
 public class TS_FileXlsx implements Closeable {
@@ -113,13 +114,8 @@ public class TS_FileXlsx implements Closeable {
     }
 
     private int getMaxFontHeight(List<Font> fonts) {
-        var maxFontSize = 1;
-        for (Font f : fonts) {
-            if (f.getFontHeightInPoints() > maxFontSize) {
-                maxFontSize = f.getFontHeightInPoints();
-            }
-        }
-        return maxFontSize;
+        var maxFontSize = fonts.stream().mapToInt(f -> f.getFontHeightInPoints()).max().orElse(1);
+        return maxFontSize < 1 ? 1 : maxFontSize;
     }
 
     @Deprecated
@@ -366,6 +362,27 @@ public class TS_FileXlsx implements Closeable {
             }
             return TGS_UnSafe.thrwReturns(e);
         });
+    }
+
+    public void changeCellBackgroundColorSolid(Cell cell, short indexedColor) {
+        var cellStyle = cell.getCellStyle();
+        if (cellStyle == null) {
+            cellStyle = cell.getSheet().getWorkbook().createCellStyle();
+        }
+        cellStyle.setFillForegroundColor(indexedColor);
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        cell.setCellStyle(cellStyle);
+    }
+
+    public void changeCellBackgroundColorBigSpots(Cell cell, short indexedColor1, short indexedColor2) {
+        var cellStyle = cell.getCellStyle();
+        if (cellStyle == null) {
+            cellStyle = cell.getSheet().getWorkbook().createCellStyle();
+        }
+        cellStyle.setFillBackgroundColor(indexedColor1);
+        cellStyle.setFillPattern(FillPatternType.BIG_SPOTS);
+        cellStyle.setFillForegroundColor(indexedColor2);
+        cell.setCellStyle(cellStyle);
     }
 
     public void setBordersToMergedCell(CellRangeAddress rangeAddress, boolean ignoreExceptions) {
