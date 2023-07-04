@@ -180,26 +180,42 @@ public class TS_FileXlsx implements Closeable {
         setPageSize(false, 4);
         {
             cellStyle_LeftTopBordered = workbook.createCellStyle();
+            setColorBackgroundSolid(cellStyle_LeftTopBordered, getIndexedColorWHITE());
             cellStyle_LeftTopBordered.setWrapText(true);
             cellStyle_LeftTopBordered.setAlignment(HorizontalAlignment.LEFT);
             cellStyle_LeftTopBordered.setVerticalAlignment(VerticalAlignment.TOP);
+        }
+        {
             cellStyle_RightTopBordered = workbook.createCellStyle();
+            setColorBackgroundSolid(cellStyle_RightTopBordered, getIndexedColorWHITE());
             cellStyle_RightTopBordered.setWrapText(true);
             cellStyle_RightTopBordered.setAlignment(HorizontalAlignment.RIGHT);
             cellStyle_RightTopBordered.setVerticalAlignment(VerticalAlignment.TOP);
+        }
+        {
             cellStyle_CenterTopBordered = workbook.createCellStyle();
+            setColorBackgroundSolid(cellStyle_CenterTopBordered, getIndexedColorWHITE());
             cellStyle_CenterTopBordered.setWrapText(true);
             cellStyle_CenterTopBordered.setAlignment(HorizontalAlignment.CENTER);
             cellStyle_CenterTopBordered.setVerticalAlignment(VerticalAlignment.TOP);
+        }
+        {
             cellStyle_LeftTop = workbook.createCellStyle();
+            setColorBackgroundSolid(cellStyle_LeftTop, getIndexedColorWHITE());
             cellStyle_LeftTop.setWrapText(true);
             cellStyle_LeftTop.setAlignment(HorizontalAlignment.LEFT);
             cellStyle_LeftTop.setVerticalAlignment(VerticalAlignment.TOP);
+        }
+        {
             cellStyle_RightTop = workbook.createCellStyle();
+            setColorBackgroundSolid(cellStyle_RightTop, getIndexedColorWHITE());
             cellStyle_RightTop.setWrapText(true);
             cellStyle_RightTop.setAlignment(HorizontalAlignment.RIGHT);
             cellStyle_RightTop.setVerticalAlignment(VerticalAlignment.TOP);
+        }
+        {
             cellStyle_CenterTop = workbook.createCellStyle();
+            setColorBackgroundSolid(cellStyle_CenterTop, getIndexedColorWHITE());
             cellStyle_CenterTop.setWrapText(true);
             cellStyle_CenterTop.setAlignment(HorizontalAlignment.CENTER);
             cellStyle_CenterTop.setVerticalAlignment(VerticalAlignment.TOP);
@@ -212,7 +228,6 @@ public class TS_FileXlsx implements Closeable {
 
     public CellStyle createCellStyle(int allign_center1_right2_defaultLeft, boolean isBordered) {
         var cs = workbook.createCellStyle();
-        setColorBackgroundSolid(cs, getIndexedColorWHITE());
         switch (allign_center1_right2_defaultLeft) {
             case 1 ->
                 cs.cloneStyleFrom(isBordered ? cellStyle_CenterTopBordered : cellStyle_CenterTop);
