@@ -15,7 +15,6 @@ import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.file.server.*;
 import com.tugalsan.api.string.client.*;
 import com.tugalsan.api.unsafe.client.*;
-import java.awt.Font;
 import java.util.stream.*;
 
 public class TS_FileXlsx implements Closeable {
@@ -212,7 +211,8 @@ public class TS_FileXlsx implements Closeable {
     }
 
     public CellStyle createCellStyle(int allign_center1_right2_defaultLeft, boolean isBordered) {
-        CellStyle cs = workbook.createCellStyle();
+        var cs = workbook.createCellStyle();
+        setColorBackgroundSolid(cs, getIndexedColorWHITE());
         switch (allign_center1_right2_defaultLeft) {
             case 1 ->
                 cs.cloneStyleFrom(isBordered ? cellStyle_CenterTopBordered : cellStyle_CenterTop);
@@ -315,6 +315,10 @@ public class TS_FileXlsx implements Closeable {
         font.setColor(indexedColor);
     }
 
+    public static short getIndexedColorWHITE() {
+        return IndexedColors.WHITE.getIndex();
+    }
+
     public static short getIndexedColorBLUE() {
         return IndexedColors.BLUE.getIndex();
     }
@@ -364,24 +368,32 @@ public class TS_FileXlsx implements Closeable {
         });
     }
 
-    public void changeCellBackgroundColorSolid(Cell cell, short indexedColor) {
-        var cellStyle = cell.getCellStyle();
-        if (cellStyle == null) {
-            cellStyle = cell.getSheet().getWorkbook().createCellStyle();
-        }
+    public void setColorBackgroundSolid(CellStyle cellStyle, short indexedColor) {
         cellStyle.setFillForegroundColor(indexedColor);
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+    }
+
+    public void setColorBackgroundSolid(Cell cell, short indexedColor) {
+        var cellStyle = cell.getCellStyle();
+        if (cellStyle == null) {
+            cellStyle = getDefaultCellStyle();//cell.getSheet().getWorkbook().createCellStyle();
+        }
+        setColorBackgroundSolid(cellStyle, indexedColor);
         cell.setCellStyle(cellStyle);
     }
 
-    public void changeCellBackgroundColorBigSpots(Cell cell, short indexedColor1, short indexedColor2) {
-        var cellStyle = cell.getCellStyle();
-        if (cellStyle == null) {
-            cellStyle = cell.getSheet().getWorkbook().createCellStyle();
-        }
+    public void setColorBackgroundBigSpots(CellStyle cellStyle, short indexedColor1, short indexedColor2) {
         cellStyle.setFillBackgroundColor(indexedColor1);
         cellStyle.setFillPattern(FillPatternType.BIG_SPOTS);
         cellStyle.setFillForegroundColor(indexedColor2);
+    }
+
+    public void setColorBackgroundBigSpots(Cell cell, short indexedColor1, short indexedColor2) {
+        var cellStyle = cell.getCellStyle();
+        if (cellStyle == null) {
+            cellStyle = getDefaultCellStyle();//cell.getSheet().getWorkbook().createCellStyle();
+        }
+        setColorBackgroundBigSpots(cellStyle, indexedColor1, indexedColor2);
         cell.setCellStyle(cellStyle);
     }
 
