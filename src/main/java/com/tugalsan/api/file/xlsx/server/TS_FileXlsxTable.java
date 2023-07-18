@@ -11,6 +11,10 @@ import com.tugalsan.api.file.html.client.TGS_FileHtmlUtils;
 import com.tugalsan.api.unsafe.client.*;
 
 public class TS_FileXlsxTable extends TGS_ListTable {
+    
+    private TS_FileXlsxTable(){
+        super(true);
+    }
 
     public boolean toFile(Path destXLSX) {
         return toFile(this, destXLSX);
