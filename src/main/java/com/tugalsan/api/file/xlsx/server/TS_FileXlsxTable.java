@@ -15,6 +15,10 @@ public class TS_FileXlsxTable extends TGS_ListTable {
     private TS_FileXlsxTable(){
         super(true);
     }
+    
+    public static TS_FileXlsxTable of(){
+        return new TS_FileXlsxTable();
+    }
 
     public boolean toFile(Path destXLSX) {
         return toFile(this, destXLSX);
