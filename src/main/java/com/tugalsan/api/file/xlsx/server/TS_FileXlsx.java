@@ -48,24 +48,27 @@ public class TS_FileXlsx implements Closeable {
     private Workbook workbook = null;
     private CreationHelper creationHelper = null;
     private Sheet sheet = null;
-    private Path filePath;
-    private CellStyle cellStyle_LeftTopBordered;
-    private CellStyle cellStyle_RightTopBordered;
-    private CellStyle cellStyle_CenterTopBordered;
-    private CellStyle cellStyle_LeftTop;
-    private CellStyle cellStyle_RightTop;
-    private CellStyle cellStyle_CenterTop;
+    private final Path filePath;
+    private final CellStyle cellStyle_LeftTopBordered;
+    private final CellStyle cellStyle_RightTopBordered;
+    private final CellStyle cellStyle_CenterTopBordered;
+    private final CellStyle cellStyle_LeftTop;
+    private final CellStyle cellStyle_RightTop;
+    private final CellStyle cellStyle_CenterTop;
 
     public Path getFile() {
         return filePath;
     }
 
     public final void setAuthor(CharSequence author) {
-        if (workbook instanceof XSSFWorkbook) {
-            ((XSSFWorkbook) workbook).getProperties().getCoreProperties().setCreator(author.toString());
-        } else if (workbook instanceof HSSFWorkbook) {
-            ((HSSFWorkbook) workbook).createInformationProperties();
-            ((HSSFWorkbook) workbook).getSummaryInformation().setAuthor(author.toString());
+        switch (workbook) {
+            case XSSFWorkbook wb -> wb.getProperties().getCoreProperties().setCreator(author.toString());
+            case HSSFWorkbook wb -> {
+                wb.createInformationProperties();
+                wb.getSummaryInformation().setAuthor(author.toString());
+            }
+            default -> {
+            }
         }
     }
 
@@ -383,7 +386,7 @@ public class TS_FileXlsx implements Closeable {
         });
     }
 
-    public void setColorBackgroundSolid(CellStyle cellStyle, short indexedColor) {
+    final public void setColorBackgroundSolid(CellStyle cellStyle, short indexedColor) {
         cellStyle.setFillForegroundColor(indexedColor);
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
     }
