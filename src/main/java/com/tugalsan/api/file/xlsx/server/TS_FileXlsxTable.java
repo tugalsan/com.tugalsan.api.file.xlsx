@@ -25,7 +25,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
     }
 
     public static boolean toFile(TGS_ListTable table, Path destXLSX) {
-        try (var xlsx = new TS_FileXlsx(destXLSX);) {
+        try (var xlsx = new TS_FileXlsxUtils(destXLSX);) {
             var fBold = xlsx.createFont(true, false, false);
             var fPlain = xlsx.createFont(false, false, false);
             IntStream.range(0, table.getRowSize()).forEachOrdered(ri -> {
