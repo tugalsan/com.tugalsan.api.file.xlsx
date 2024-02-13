@@ -1,7 +1,7 @@
 package com.tugalsan.api.file.xlsx.server;
 
 import com.tugalsan.api.file.common.server.TS_FileCommonInterface;
-import com.tugalsan.api.file.common.server.TS_FileTmcrCodeFontTags;
+import com.tugalsan.api.file.common.server.TS_FileCommonFontTags;
 import com.tugalsan.api.file.common.server.TS_FileCommonBall;
 import com.tugalsan.api.string.server.*;
 import com.tugalsan.api.file.server.*;
@@ -128,37 +128,37 @@ public class TS_FileXlsx extends TS_FileCommonInterface {
         if (isClosed()) {
             return IndexedColors.BLACK.getIndex();
         }
-        if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_BLUE())) {
+        if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_BLUE())) {
             return IndexedColors.BLUE.getIndex();
         }
-        if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_CYAN())) {
+        if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_CYAN())) {
             return IndexedColors.CORAL.getIndex();
         }
-        if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_DARK_GRAY())) {
+        if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_DARK_GRAY())) {
             return IndexedColors.GREY_80_PERCENT.getIndex();
         }
-        if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_GRAY())) {
+        if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_GRAY())) {
             return IndexedColors.GREY_40_PERCENT.getIndex();
         }
-        if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_GREEN())) {
+        if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_GREEN())) {
             return IndexedColors.GREEN.getIndex();
         }
-        if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_LIGHT_GRAY())) {
+        if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_LIGHT_GRAY())) {
             return IndexedColors.GREY_25_PERCENT.getIndex();
         }
-        if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_MAGENTA())) {
+        if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_MAGENTA())) {
             return IndexedColors.MAROON.getIndex();
         }
-        if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_ORANGE())) {
+        if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_ORANGE())) {
             return IndexedColors.ORANGE.getIndex();
         }
-        if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_PINK())) {
+        if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_PINK())) {
             return IndexedColors.PINK.getIndex();
         }
-        if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_RED())) {
+        if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_RED())) {
             return IndexedColors.RED.getIndex();
         }
-        if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_YELLOW())) {
+        if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_YELLOW())) {
             return IndexedColors.YELLOW.getIndex();
         }
         return IndexedColors.BLACK.getIndex();
