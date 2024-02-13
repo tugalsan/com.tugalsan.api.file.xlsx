@@ -9,6 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.tugalsan.api.list.client.TGS_ListTable;
 import com.tugalsan.api.file.html.client.TGS_FileHtmlUtils;
 import com.tugalsan.api.unsafe.client.*;
+import com.tugalsan.api.url.client.TGS_Url;
 
 public class TS_FileXlsxTable extends TGS_ListTable {
     
@@ -37,7 +38,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
         return Files.exists(destXLSX) && !Files.isDirectory(destXLSX);
     }
 
-    public static StringBuffer toHTML(Path destXLSX, CharSequence optionalCustomDomain) {
+    public static StringBuffer toHTML(Path destXLSX, TGS_Url optionalCustomDomain) {
         return TGS_UnSafe.call(() -> {
             try (var is = Files.newInputStream(destXLSX)) {
                 var FILE_TYPES = new String[]{"xls", "xlsx"};
