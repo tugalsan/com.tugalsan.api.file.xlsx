@@ -1,8 +1,8 @@
 package com.tugalsan.api.file.xlsx.server;
 
-import com.tugalsan.api.file.common.server.TS_FileCommonInterface;
+import com.tugalsan.api.file.common.server.TS_FileCommonAbstract;
 import com.tugalsan.api.file.common.server.TS_FileCommonFontTags;
-import com.tugalsan.api.file.common.server.TS_FileCommonBall;
+import com.tugalsan.api.file.common.server.TS_FileCommonConfig;
 import com.tugalsan.api.string.server.*;
 import com.tugalsan.api.file.server.*;
 import com.tugalsan.api.cast.client.*;
@@ -19,7 +19,7 @@ import com.tugalsan.api.runnable.client.TGS_RunnableType1;
 import com.tugalsan.api.unsafe.client.*;
 import com.tugalsan.api.url.client.*;
 
-public class TS_FileXlsx extends TS_FileCommonInterface {
+public class TS_FileXlsx extends TS_FileCommonAbstract {
 
     final private static TS_Log d = TS_Log.of(TS_FileXlsx.class);
 
@@ -39,7 +39,7 @@ public class TS_FileXlsx extends TS_FileCommonInterface {
     private final String CELL_Occupied = "CELL_FULL";
     private final String CELL_Vacant = "CELL_EMPTY";
 
-    private TS_FileCommonBall fileCommonBall;
+    private TS_FileCommonConfig fileCommonConfig;
     private boolean landscape = false;
     private int pageSizeAX = 4;
 
@@ -47,10 +47,10 @@ public class TS_FileXlsx extends TS_FileCommonInterface {
         super(enabled, localFile, remoteFile);
     }
 
-    public static void use(boolean enabled, TS_FileCommonBall fileCommonBall, Path localFile, TGS_Url remoteFile, TGS_RunnableType1<TS_FileXlsx> xlsx) {
+    public static void use(boolean enabled, TS_FileCommonConfig fileCommonConfig, Path localFile, TGS_Url remoteFile, TGS_RunnableType1<TS_FileXlsx> xlsx) {
         var instance = new TS_FileXlsx(enabled, localFile, remoteFile);
         try {
-            instance.use_init(fileCommonBall);
+            instance.use_init(fileCommonConfig);
             xlsx.run(instance);
         } catch (Exception e) {
             instance.saveFile(e.getMessage());
@@ -61,8 +61,8 @@ public class TS_FileXlsx extends TS_FileCommonInterface {
 
     }
 
-    private void use_init(TS_FileCommonBall fileCommonBall) {
-        this.fileCommonBall = fileCommonBall;
+    private void use_init(TS_FileCommonConfig fileCommonConfig) {
+        this.fileCommonConfig = fileCommonConfig;
         if (isClosed()) {
             return;
         }
@@ -106,19 +106,19 @@ public class TS_FileXlsx extends TS_FileCommonInterface {
         if (isClosed()) {
             return true;
         }
-        var fh = fileCommonBall.fontHeight + FONT_HEIGHT_OFFSET();
+        var fh = fileCommonConfig.fontHeight + FONT_HEIGHT_OFFSET();
         if (fh < 1) {
             fh = 1;
         }
-        currentFont = xlsx.createFont(fileCommonBall.fontBold, fileCommonBall.fontItalic,
-                fileCommonBall.fontUnderlined, fh, getFontColor());
+        currentFont = xlsx.createFont(fileCommonConfig.fontBold, fileCommonConfig.fontItalic,
+                fileCommonConfig.fontUnderlined, fh, getFontColor());
         var k = 0.8f;
         var fh_half = (int) (fh * k);
         if (fh_half < 1) {
             fh_half = 1;
         }
-        currentFont_half = xlsx.createFont(fileCommonBall.fontBold, fileCommonBall.fontItalic,
-                fileCommonBall.fontUnderlined, fh_half, getFontColor());
+        currentFont_half = xlsx.createFont(fileCommonConfig.fontBold, fileCommonConfig.fontItalic,
+                fileCommonConfig.fontUnderlined, fh_half, getFontColor());
         return true;
     }
     private Font currentFont;
@@ -128,37 +128,37 @@ public class TS_FileXlsx extends TS_FileCommonInterface {
         if (isClosed()) {
             return IndexedColors.BLACK.getIndex();
         }
-        if (Objects.equals(fileCommonBall.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_BLUE())) {
+        if (Objects.equals(fileCommonConfig.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_BLUE())) {
             return IndexedColors.BLUE.getIndex();
         }
-        if (Objects.equals(fileCommonBall.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_CYAN())) {
+        if (Objects.equals(fileCommonConfig.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_CYAN())) {
             return IndexedColors.CORAL.getIndex();
         }
-        if (Objects.equals(fileCommonBall.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_DARK_GRAY())) {
+        if (Objects.equals(fileCommonConfig.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_DARK_GRAY())) {
             return IndexedColors.GREY_80_PERCENT.getIndex();
         }
-        if (Objects.equals(fileCommonBall.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_GRAY())) {
+        if (Objects.equals(fileCommonConfig.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_GRAY())) {
             return IndexedColors.GREY_40_PERCENT.getIndex();
         }
-        if (Objects.equals(fileCommonBall.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_GREEN())) {
+        if (Objects.equals(fileCommonConfig.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_GREEN())) {
             return IndexedColors.GREEN.getIndex();
         }
-        if (Objects.equals(fileCommonBall.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_LIGHT_GRAY())) {
+        if (Objects.equals(fileCommonConfig.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_LIGHT_GRAY())) {
             return IndexedColors.GREY_25_PERCENT.getIndex();
         }
-        if (Objects.equals(fileCommonBall.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_MAGENTA())) {
+        if (Objects.equals(fileCommonConfig.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_MAGENTA())) {
             return IndexedColors.MAROON.getIndex();
         }
-        if (Objects.equals(fileCommonBall.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_ORANGE())) {
+        if (Objects.equals(fileCommonConfig.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_ORANGE())) {
             return IndexedColors.ORANGE.getIndex();
         }
-        if (Objects.equals(fileCommonBall.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_PINK())) {
+        if (Objects.equals(fileCommonConfig.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_PINK())) {
             return IndexedColors.PINK.getIndex();
         }
-        if (Objects.equals(fileCommonBall.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_RED())) {
+        if (Objects.equals(fileCommonConfig.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_RED())) {
             return IndexedColors.RED.getIndex();
         }
-        if (Objects.equals(fileCommonBall.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_YELLOW())) {
+        if (Objects.equals(fileCommonConfig.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_YELLOW())) {
             return IndexedColors.YELLOW.getIndex();
         }
         return IndexedColors.BLACK.getIndex();
@@ -368,7 +368,7 @@ public class TS_FileXlsx extends TS_FileCommonInterface {
                 d.ci("beginTableCell.CELL_FULL ri:" + ri + ", ci:" + ci);
             });
         });
-        lastCell = new TS_MIFXLSX_RichCell(xlsx, fileCommonBall, rowSpan, colSpan, cellHeight, colSpanSize);
+        lastCell = new TS_MIFXLSX_RichCell(xlsx, fileCommonConfig, rowSpan, colSpan, cellHeight, colSpanSize);
         table.setValue(currentRowIndex, currentColXLSXIndex, lastCell);
         return true;
     }
@@ -448,7 +448,7 @@ public class TS_FileXlsx extends TS_FileCommonInterface {
                 d.ce("beginText why lastCell exists!");
                 return false;
             }
-            lastCell = new TS_MIFXLSX_RichCell(xlsx, fileCommonBall, null, null, null, null);
+            lastCell = new TS_MIFXLSX_RichCell(xlsx, fileCommonConfig, null, null, null, null);
             lastCell.setStyle(allign_Left0_center1_right2_just3, false);
             doc.add(lastCell);
             return true;
@@ -595,7 +595,7 @@ public class TS_FileXlsx extends TS_FileCommonInterface {
         List<String> texts;
         List<Font> fonts;
         TS_FileXlsxUtils xlsx;
-        TS_FileCommonBall fileCommonBall;
+        TS_FileCommonConfig fileCommonConfig;
         int rowIdx, colIdx;
         Integer rowSpan, colSpan, rowHeight;
         Integer colSpanSize;
@@ -605,8 +605,8 @@ public class TS_FileXlsx extends TS_FileCommonInterface {
         int rotationInDegrees_0_90_180_270 = 0;
         List<Path> imgFiles;
 
-        public TS_MIFXLSX_RichCell(TS_FileXlsxUtils xlsx, TS_FileCommonBall fileCommonBall, Integer rowSpan, Integer colSpan, Integer rowHeight, Integer colSpanSize) {
-            this.fileCommonBall = fileCommonBall;
+        public TS_MIFXLSX_RichCell(TS_FileXlsxUtils xlsx, TS_FileCommonConfig fileCommonConfig, Integer rowSpan, Integer colSpan, Integer rowHeight, Integer colSpanSize) {
+            this.fileCommonConfig = fileCommonConfig;
             this.xlsx = xlsx;
             this.isTableCell = rowSpan != null;
             this.rowSpan = rowSpan;
