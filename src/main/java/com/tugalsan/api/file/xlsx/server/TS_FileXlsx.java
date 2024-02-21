@@ -21,7 +21,7 @@ import com.tugalsan.api.url.client.*;
 
 public class TS_FileXlsx extends TS_FileCommonAbstract {
 
-    final private static TS_Log d = TS_Log.of(TS_FileXlsx.class);
+    final private static TS_Log d = TS_Log.of( TS_FileXlsx.class);
 
     private static int FONT_HEIGHT_OFFSET() {
         return -2;
@@ -285,7 +285,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
         }
         this.table_relColSizes = TGS_MathUtils.convertWeighted(relColSizes, 1, xlsx.getMaxPageColumnCount());
         d.ci("beginTable.PST relColSizes: " + TGS_StringUtils.toString(table_relColSizes, ", "));
-        table = TGS_ListTable.ofStr();
+        table = TGS_ListTable.of(false);
         currentRowIndex = 0;
         currentColXLSXIndex = 0;
         currentColRelIndex = 0;
@@ -304,6 +304,9 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
 
     @Override
     public boolean endTable() {
+        if (isClosed()) {
+            return true;
+        }
         this.table_relColSizes = null;
         table = null;
         return true;

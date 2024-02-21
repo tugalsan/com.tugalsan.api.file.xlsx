@@ -19,7 +19,7 @@ import java.util.stream.*;
 
 public class TS_FileXlsxUtils implements Closeable {
 
-    final private static TS_Log d = TS_Log.of(TS_FileXlsxUtils.class);
+    final private static TS_Log d = TS_Log.of( TS_FileXlsxUtils.class);
 
     private static int CELL_TEXT_MAX_CHAR_SIZE() {
         return 32767;
