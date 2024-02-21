@@ -22,7 +22,7 @@
             </exclusions>
             <version>4.1.2</version><!--not 5!-->
         </dependency>
-        <dependency>
+        <dependency><!-- FIX FOR: com.tugalsan.api.file.docx -->
             <groupId>org.apache.poi</groupId>
             <artifactId>ooxml-schemas</artifactId>
             <version>1.4</version>
@@ -91,7 +91,7 @@
                 <version>3.12.1</version>
                 <configuration>
                     <release>21</release>
-                     <!--  <enablePreview>true</enablePreview>
+                    <!--  <enablePreview>true</enablePreview>
                     <compilerArgs>
                        <arg>- -add-modules</arg>
                         <arg>jdk.incubator.vector</arg>

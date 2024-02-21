@@ -2,7 +2,6 @@ module com.tugalsan.api.file.xlsx {
     requires java.desktop;
     requires poi;
     requires poi.ooxml;
-    requires ooxml.schemas;
     requires com.tugalsan.api.list;
     requires com.tugalsan.api.url;
     requires com.tugalsan.api.charset;
