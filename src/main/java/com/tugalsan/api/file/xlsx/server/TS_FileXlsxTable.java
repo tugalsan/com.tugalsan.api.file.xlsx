@@ -12,11 +12,11 @@ import com.tugalsan.api.unsafe.client.*;
 import com.tugalsan.api.url.client.TGS_Url;
 
 public class TS_FileXlsxTable extends TGS_ListTable {
-    
-    private TS_FileXlsxTable(){
+
+    private TS_FileXlsxTable() {
         super(true);
     }
-    
+
     public boolean toFile(Path destXLSX) {
         return toFile(this, destXLSX);
     }
@@ -38,7 +38,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
         return Files.exists(destXLSX) && !Files.isDirectory(destXLSX);
     }
 
-    public static StringBuffer toHTML(Path destXLSX, TGS_Url optionalCustomDomain) {
+    public static StringBuffer toHTML(Path destXLSX, TGS_Url bootLoaderJs) {
         return TGS_UnSafe.call(() -> {
             try (var is = Files.newInputStream(destXLSX)) {
                 var FILE_TYPES = new String[]{"xls", "xlsx"};
@@ -51,7 +51,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
                 if (isXLS) {
                     try (var workbook = new HSSFWorkbook(is);) {
                         var sb = new StringBuffer();
-                        sb.append(TGS_FileHtmlUtils.beginLines(destXLSX.toString(), true, false, 5, 5, null, false, optionalCustomDomain));
+                        sb.append(TGS_FileHtmlUtils.beginLines(destXLSX.toString(), false, 5, 5, null, false, bootLoaderJs));
                         sb.append("<table>");
                         var sheet = workbook.getSheetAt(0);
                         var rows = sheet.rowIterator();
@@ -74,7 +74,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
                 }
                 try (var workbook = new XSSFWorkbook(is);) {
                     var sb = new StringBuffer();
-                    sb.append(TGS_FileHtmlUtils.beginLines(destXLSX.toString(), true, false, 5, 5, null, false, optionalCustomDomain));
+                    sb.append(TGS_FileHtmlUtils.beginLines(destXLSX.toString(), false, 5, 5, null, false, bootLoaderJs));
                     sb.append("<table>");
                     var sheet = workbook.getSheetAt(0);
                     var rows = sheet.rowIterator();
