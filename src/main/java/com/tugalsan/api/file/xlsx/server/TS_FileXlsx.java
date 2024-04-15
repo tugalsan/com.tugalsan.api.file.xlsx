@@ -16,12 +16,12 @@ import com.tugalsan.api.string.client.*;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.list.client.*;
 import com.tugalsan.api.runnable.client.TGS_RunnableType1;
-import com.tugalsan.api.unsafe.client.*;
+import com.tugalsan.api.union.client.TGS_UnionExcuse;
 import com.tugalsan.api.url.client.*;
 
 public class TS_FileXlsx extends TS_FileCommonAbstract {
 
-    final private static TS_Log d = TS_Log.of( TS_FileXlsx.class);
+    final private static TS_Log d = TS_Log.of(TS_FileXlsx.class);
 
     private static int FONT_HEIGHT_OFFSET() {
         return -2;
@@ -185,13 +185,13 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                     IntStream.range(0, tags.size()).forEachOrdered(j -> {
                         var tag = tags.get(j);
                         var dbl = TGS_StringDouble.of(text);
-                        if (dbl.isEmpty()) {
+                        if (dbl.isExcuse()) {
                             lastCell.texts.add(tag);
                             lastCell.fonts.add(currentFont);
                         } else {
-                            lastCell.texts.add(String.valueOf(dbl.get().left));
+                            lastCell.texts.add(String.valueOf(dbl.value().left));
                             lastCell.fonts.add(currentFont);
-                            lastCell.texts.add(String.valueOf(dbl.get().dim()) + String.valueOf(dbl.get().right));
+                            lastCell.texts.add(String.valueOf(dbl.value().dim()) + String.valueOf(dbl.value().right));
                             lastCell.fonts.add(currentFont_half);
                         }
                         if (tags.size() - 1 != j) {
@@ -309,21 +309,24 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
         return true;
     }
 
-    private int findMeAndEmptyCell(int rowIdx) {
+    private TGS_UnionExcuse<Integer> findMeAndEmptyCell(int rowIdx) {
         var emptyCellIdx = table.getColumnSize(rowIdx);
         if (isClosed()) {
-            return emptyCellIdx;
+            return TGS_UnionExcuse.of(emptyCellIdx);
         }
         for (var ci = 0; ci < table.getColumnSize(rowIdx); ci++) {
             var o = table.getValueAsObject(rowIdx, ci);
-            if (o instanceof String ins) {
+            if (o.isExcuse()) {
+                return o.toExcuse();
+            }
+            if (o.value() instanceof String ins) {
                 if (CELL_Vacant.equals(ins)) {
                     emptyCellIdx = ci;
                     break;
                 }
             }
         }
-        return emptyCellIdx;
+        return TGS_UnionExcuse.of(emptyCellIdx);
     }
 
     @Override
@@ -332,7 +335,12 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
             return true;
         }
         while (true) {
-            currentColXLSXIndex = findMeAndEmptyCell(currentRowIndex);
+            var u = findMeAndEmptyCell(currentRowIndex);
+            if (u.isExcuse()) {
+                d.ce("beginTableCell", u.excuse());
+                return false;
+            }
+            currentColXLSXIndex = u.value();
             d.ci("beginTableCell.currentRowIndex0:", currentRowIndex);
             if (currentColXLSXIndex >= xlsx.getMaxPageColumnCount()) {
                 currentRowIndex++;
@@ -341,9 +349,19 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                 break;
             }
         }
-        currentColXLSXIndex = findMeAndEmptyCell(currentRowIndex);
+        var u = findMeAndEmptyCell(currentRowIndex);
+        if (u.isExcuse()) {
+            d.ce("beginTableCell", u.excuse());
+            return false;
+        }
+        currentColXLSXIndex = u.value();
         d.ci("beginTableCell.currentColXLSXIndex2:", currentColXLSXIndex);
-        currentColRelIndex = calcColRelIndex(currentRowIndex);
+        var uu = calcColRelIndex(currentRowIndex);
+        if (uu.isExcuse()) {
+            d.ce("beginTableCell", uu.excuse());
+            return false;
+        }
+        currentColRelIndex = uu.value();
         d.ci("beginTableCell.currentColRelIndex2:", currentColRelIndex);
 
         var colSpanSize = 0;
@@ -373,16 +391,19 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
         return true;
     }
 
-    private int calcColRelIndex(int rowIdx) {
+    private TGS_UnionExcuse<Integer> calcColRelIndex(int rowIdx) {
         var emptyCellIdx = 0;
         if (isClosed()) {
-            return emptyCellIdx;
+            return TGS_UnionExcuse.of(emptyCellIdx);
         }
         String prevrelColIdx = null;
         for (var ci = 0; ci < table.getColumnSize(rowIdx); ci++) {
             d.ci("calcColRelIndex.ci:" + ci);
             var o = table.getValueAsObject(rowIdx, ci);
-            switch (o) {
+            if (o.isExcuse()) {
+                return o.toExcuse();
+            }
+            switch (o.value()) {
                 case String ins -> {
                     if (CELL_Vacant.equals(ins)) {
                         d.ci("calcColRelIndex.iisString.isEmpty");
@@ -398,7 +419,11 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                             d.ci("calcColRelIndex.iisString.isFull.@colIdx:" + relColIdx + ".wColPan:" + relColSpan);
                             if (prevrelColIdx == null || !relColIdx.equals(prevrelColIdx)) {
                                 prevrelColIdx = relColIdx;
-                                emptyCellIdx += TGS_CastUtils.toInteger(relColSpan);
+                                var u = TGS_CastUtils.toInteger(relColSpan);
+                                if (u.isExcuse()) {
+                                    return u.toExcuse();
+                                }
+                                emptyCellIdx += u.value();
                                 d.ci("calcColRelIndex.iisString.isFull.emptyCellIdx:" + emptyCellIdx);
                             }
                         }
@@ -412,7 +437,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                     d.ci("calcColRelIndex.iisString.isERROR.o:" + o);
             }
         }
-        return emptyCellIdx;
+        return TGS_UnionExcuse.of(emptyCellIdx);
     }
 
     @Override
@@ -429,7 +454,12 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                 colSpanSize += table_relColSizes[ci];
             }
         }
-        currentColRelIndex = calcColRelIndex(currentRowIndex);
+        var uu = calcColRelIndex(currentRowIndex);
+        if (uu.isExcuse()) {
+            d.ce("endTableCell", uu.excuse());
+            return false;
+        }
+        currentColRelIndex = uu.value();
 //        currentColRelIndex += lastCell.colSpan;
         d.ci("endTableCell.currentColRelIndex:" + currentColRelIndex);
         d.ci("endTableCell.colSpanSize:" + colSpanSize);
@@ -474,7 +504,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
     }
 
     private void saveFile_close() {
-        TGS_UnSafe.run(() -> {
+        try {
             d.ci("compileFile.*** adding last line...");
             beginText(0);
             addText("");
@@ -494,9 +524,12 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                         var xlsxCell = xlsx.getCell(currentRowIndex, 0);
                         xlsx.setCellStyle(xlsxCell, xlsx.createCellStyle(cellDI.allign_center1_right2_defaultLeft, cellDI.isBordered));
                         xlsx.setCellRichText(xlsxCell, xlsx.createRichText(cellDI.texts, cellDI.fonts));
-                        var ra = xlsx.createMergedCell(currentRowIndex, currentRowIndex, 0, maxPageColumnCount - 1, true);
-                        if (cellDI.isBordered) {
-                            xlsx.setBordersToMergedCell(ra, true);
+                        var ra = xlsx.createMergedCell(currentRowIndex, currentRowIndex, 0, maxPageColumnCount - 1);
+                        if (ra.isExcuse()) {
+                            d.ce("saveFile_close", ra.value());
+                        }
+                        if (ra.isPresent() && cellDI.isBordered) {
+                            xlsx.setBordersToMergedCell(ra.value());
                         }
                         var rowHeight = xlsx.calculateCellHeight(cellDI.texts, cellDI.fonts, maxPageColumnCount);
                         d.ci("compileFile. >>> MIFXLSX.parag.setRowHeight. ri:" + currentRowIndex + ", rh:" + rowHeight);
@@ -511,17 +544,24 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                             for (var ci = 0; ci < ins.getColumnSize(ri); ci++) {//max
 //                            d("compileFile.table.getValueAsObject(" + ri + ", " + ci + ") -> " + table.getValueAsObject(ri, ci));
                                 var o = ins.getValueAsObject(ri, ci);
-                                if (!(o instanceof TS_MIFXLSX_RichCell)) {
+                                if (o.isExcuse()) {
+                                    d.ce("saveFile_close", o.excuse());
+                                    continue;
+                                }
+                                if (!(o.value() instanceof TS_MIFXLSX_RichCell)) {
 //                                d("compileFile.*** skipping cell :" + table.getValueAsObject(ri, ci));
                                     continue;
                                 }
-                                var cell = (TS_MIFXLSX_RichCell) o;
+                                var cell = (TS_MIFXLSX_RichCell) o.value();
                                 var xlsxCell = xlsx.getCell(currentRowIndex, ci);
                                 xlsx.setCellStyle(xlsxCell, xlsx.createCellStyle(cell.allign_center1_right2_defaultLeft, true));
                                 xlsx.setCellRichText(xlsxCell, xlsx.createRichText(cell.texts, cell.fonts));
-                                var ra = xlsx.createMergedCell(currentRowIndex, currentRowIndex + cell.rowSpan - 1, ci, ci + cell.colSpanSize - 1, true);
-                                if (cell.isBordered) {
-                                    xlsx.setBordersToMergedCell(ra, true);
+                                var ra = xlsx.createMergedCell(currentRowIndex, currentRowIndex + cell.rowSpan - 1, ci, ci + cell.colSpanSize - 1);
+                                if (ra.isExcuse()) {
+                                    d.ce("saveFile_close", ra.value());
+                                }
+                                if (ra.isPresent() && cell.isBordered) {
+                                    xlsx.setBordersToMergedCell(ra.value());
                                 }
                                 {
                                     var newHeight = xlsx.calculateCellHeight(cell.texts, cell.fonts, cell.colSpan) / cell.rowSpan;
@@ -563,11 +603,15 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                             var fRi = ri;
                             IntStream.range(0, ins.getColumnSize(fRi)).forEachOrdered(ci -> {
                                 var o = ins.getValueAsObject(fRi, ci);
-                                if (!(o instanceof TS_MIFXLSX_RichCell)) {
+                                if (o.isExcuse()) {
+                                    d.ce("saveFile_close", o.excuse());
+                                    return;
+                                }
+                                if (!(o.value() instanceof TS_MIFXLSX_RichCell)) {
 //                                d("compileFile.*** skipping cell :" + table.getValueAsObject(ri, ci));
                                     return;
                                 }
-                                var cell = (TS_MIFXLSX_RichCell) o;
+                                var cell = (TS_MIFXLSX_RichCell) o.value();
                                 IntStream.range(0, cell.imgFiles.size()).forEachOrdered(i -> {
                                     d.ci("compileFile.*** addImage i:" + i);
                                     xlsx.addImage(cell.imgFiles.get(i).toAbsolutePath().toString(), currentRowIndex, ci, cell.colSpan);
@@ -580,14 +624,10 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                         d.ci("compileFile *** MIFXLSX.ERROR. unknown doc.get object: " + doc.get(di));
                 }
             }
-
+        } finally {
             d.ci("compileFile.*** double xlsx.close();...");
             xlsx.close();
-        }, e -> {
-            d.ce("compileFile.ERROR: MIFXLSX.close -> " + e.getMessage());
-            e.printStackTrace();
-            TGS_UnSafe.run(() -> xlsx.close(), e2 -> e2.printStackTrace());
-        });
+        }
     }
 
     private static class TS_MIFXLSX_RichCell {

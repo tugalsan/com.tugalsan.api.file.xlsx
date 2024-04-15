@@ -14,12 +14,13 @@ import com.tugalsan.api.list.client.*;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.file.server.*;
 import com.tugalsan.api.string.client.*;
-import com.tugalsan.api.unsafe.client.*;
+import com.tugalsan.api.union.client.TGS_UnionExcuse;
+import com.tugalsan.api.union.client.TGS_UnionExcuseVoid;
 import java.util.stream.*;
 
 public class TS_FileXlsxUtils implements Closeable {
 
-    final private static TS_Log d = TS_Log.of( TS_FileXlsxUtils.class);
+    final private static TS_Log d = TS_Log.of(TS_FileXlsxUtils.class);
 
     private static int CELL_TEXT_MAX_CHAR_SIZE() {
         return 32767;
@@ -62,7 +63,8 @@ public class TS_FileXlsxUtils implements Closeable {
 
     public final void setAuthor(CharSequence author) {
         switch (workbook) {
-            case XSSFWorkbook wb -> wb.getProperties().getCoreProperties().setCreator(author.toString());
+            case XSSFWorkbook wb ->
+                wb.getProperties().getCoreProperties().setCreator(author.toString());
             case HSSFWorkbook wb -> {
                 wb.createInformationProperties();
                 wb.getSummaryInformation().setAuthor(author.toString());
@@ -372,18 +374,11 @@ public class TS_FileXlsxUtils implements Closeable {
         return createFont(isBold, isItalic, isUnderline, null, null);
     }
 
-    public CellRangeAddress createMergedCell(int rowFrom, int rowTo, int colFrom, int colTo, boolean ignoreExceptions) {
-        return TGS_UnSafe.call(() -> {
-            d.ci("createMergedCell rf:" + rowFrom + ", rt:" + rowTo + ", cf:" + colFrom + ", ct:" + colTo);
-            var rangeAddress = new CellRangeAddress(rowFrom, rowTo, colFrom, colTo);
-            sheet.addMergedRegion(rangeAddress);
-            return rangeAddress;
-        }, e -> {
-            if (ignoreExceptions) {
-                return null;
-            }
-            return TGS_UnSafe.thrwReturns(e);
-        });
+    public TGS_UnionExcuse<CellRangeAddress> createMergedCell(int rowFrom, int rowTo, int colFrom, int colTo) {
+        d.ci("createMergedCell rf:" + rowFrom + ", rt:" + rowTo + ", cf:" + colFrom + ", ct:" + colTo);
+        var rangeAddress = new CellRangeAddress(rowFrom, rowTo, colFrom, colTo);
+        sheet.addMergedRegion(rangeAddress);
+        return TGS_UnionExcuse.of(rangeAddress);
     }
 
     final public void setColorBackgroundSolid(CellStyle cellStyle, short indexedColor) {
@@ -415,100 +410,94 @@ public class TS_FileXlsxUtils implements Closeable {
         cell.setCellStyle(cellStyle);
     }
 
-    public void setBordersToMergedCell(CellRangeAddress rangeAddress, boolean ignoreExceptions) {
-        TGS_UnSafe.run(() -> {
-            RegionUtil.setBorderTop(BorderStyle.MEDIUM, rangeAddress, sheet);
-            RegionUtil.setBorderLeft(BorderStyle.MEDIUM, rangeAddress, sheet);
-            RegionUtil.setBorderRight(BorderStyle.MEDIUM, rangeAddress, sheet);
-            RegionUtil.setBorderBottom(BorderStyle.MEDIUM, rangeAddress, sheet);
-        }, e -> {
-            if (ignoreExceptions) {
-                return;
-            }
-            TGS_UnSafe.thrwReturns(e);
-        });
+    public void setBordersToMergedCell(CellRangeAddress rangeAddress) {
+        RegionUtil.setBorderTop(BorderStyle.MEDIUM, rangeAddress, sheet);
+        RegionUtil.setBorderLeft(BorderStyle.MEDIUM, rangeAddress, sheet);
+        RegionUtil.setBorderRight(BorderStyle.MEDIUM, rangeAddress, sheet);
+        RegionUtil.setBorderBottom(BorderStyle.MEDIUM, rangeAddress, sheet);
     }
 
     @Override
     public void close() {
-        close(false);
+        var u = closeExcusable();
+        if (u.isExcuse()) {
+            d.ce("close", u.excuse());
+        }
     }
 
-    public void close(boolean ignoreExceptions) {
-        TGS_UnSafe.run(() -> {
-            try (var fileOut = new FileOutputStream(filePath.toFile())) {
-                workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
-                workbook.write(fileOut);
-            }
-        }, e -> {
-            if (ignoreExceptions) {
-                return;
-            }
-            TGS_UnSafe.thrwReturns(e);
-        });
+    public TGS_UnionExcuseVoid closeExcusable() {
+        try (var fileOut = new FileOutputStream(filePath.toFile())) {
+            workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            workbook.write(fileOut);
+            return TGS_UnionExcuseVoid.ofVoid();
+        } catch (IOException ex) {
+            return TGS_UnionExcuseVoid.ofExcuse(ex);
+        }
     }
 
-    public void addImage(CharSequence imgFile, int rowIdx, int colIdx, int colspan) {
-        TGS_UnSafe.run(() -> {
-            var imgFileStr = imgFile.toString();
-            var imgFileStrLc = TGS_CharSetCast.toLocaleLowerCase(imgFileStr);
-            var format = TGS_Coronator.ofInt()
-                    .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".emf"), val -> Workbook.PICTURE_TYPE_EMF)
-                    .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".wmf"), val -> Workbook.PICTURE_TYPE_WMF)
-                    .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".png"), val -> Workbook.PICTURE_TYPE_PNG)
-                    .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".jpeg") || imgFileStrLc.endsWith(".jpg"), val -> Workbook.PICTURE_TYPE_JPEG)
-                    .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".pict") || imgFileStrLc.endsWith(".pıct"), val -> Workbook.PICTURE_TYPE_PICT)
-                    .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".dib") || imgFileStrLc.endsWith(".dıb"), val -> Workbook.PICTURE_TYPE_DIB)
-                    .coronate();
-            if (format == null) {
-                d.ce("addImage.Unsupported picture: " + imgFileStr + ". Expected emf|wmf|pict|jpeg|png|dib|gif|tiff|eps|bmp|wpg");
-                return;
-            }
+    public TGS_UnionExcuseVoid addImage(CharSequence imgFile, int rowIdx, int colIdx, int colspan) {
+        var imgFileStr = imgFile.toString();
+        var imgFileStrLc = TGS_CharSetCast.toLocaleLowerCase(imgFileStr);
+        var format = TGS_Coronator.ofInt()
+                .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".emf"), val -> Workbook.PICTURE_TYPE_EMF)
+                .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".wmf"), val -> Workbook.PICTURE_TYPE_WMF)
+                .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".png"), val -> Workbook.PICTURE_TYPE_PNG)
+                .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".jpeg") || imgFileStrLc.endsWith(".jpg"), val -> Workbook.PICTURE_TYPE_JPEG)
+                .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".pict") || imgFileStrLc.endsWith(".pıct"), val -> Workbook.PICTURE_TYPE_PICT)
+                .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".dib") || imgFileStrLc.endsWith(".dıb"), val -> Workbook.PICTURE_TYPE_DIB)
+                .coronate();
+        if (format == null) {
+            return TGS_UnionExcuseVoid.ofExcuse(d.className, "addImage", "Unsupported picture: " + imgFileStr + ". Expected emf|wmf|pict|jpeg|png|dib|gif|tiff|eps|bmp|wpg");
+        }
 //        r.setText(imgFile);
 //        r.addBreak();
-            d.ci("addImage.INFO: TK_XLSXFile.run.addPicture.BEGIN...");
-            var pictureIdx = workbook.addPicture(TS_FileUtils.read(Path.of(imgFileStr)), format);
+        d.ci("addImage.INFO: TK_XLSXFile.run.addPicture.BEGIN...");
+        var u_read = TS_FileUtils.read(Path.of(imgFileStr));
+        if (u_read.isExcuse()) {
+            return u_read.toExcuseVoid();
+        }
+        var pictureIdx = workbook.addPicture(u_read.value(), format);
 
-            var helper = workbook.getCreationHelper();
-            var anchor = helper.createClientAnchor();
-            anchor.setCol1(colIdx);
-            anchor.setRow1(rowIdx);
+        var helper = workbook.getCreationHelper();
+        var anchor = helper.createClientAnchor();
+        anchor.setCol1(colIdx);
+        anchor.setRow1(rowIdx);
 
-            var drawing = sheet.createDrawingPatriarch();
-            var pict = drawing.createPicture(anchor, pictureIdx);
-            pict.resize();//resize to original size
-            d.ci("addImage: w:" + pict.getImageDimension().getWidth() + ", h:" + pict.getImageDimension().getHeight() + ", l:" + imgFileStr);
+        var drawing = sheet.createDrawingPatriarch();
+        var pict = drawing.createPicture(anchor, pictureIdx);
+        pict.resize();//resize to original size
+        d.ci("addImage: w:" + pict.getImageDimension().getWidth() + ", h:" + pict.getImageDimension().getHeight() + ", l:" + imgFileStr);
 
-            //get calculate width center 
-            var pictWidthPx = pict.getImageDimension().width;
-            d.ci("addImage.pictWidthPx:" + pictWidthPx);
-            var cellWidthPx = IntStream.range(0, colspan)
-                    .mapToLong(ci -> Math.round(DEFAULT_COLUMNWIDTH_INPX()))
-                    .sum();
-            d.ci("addImage.cellWidthPx:" + cellWidthPx);
-            var centerPosPx = Math.round(cellWidthPx / 2d - pictWidthPx / 2d);
-            d.ci("addImage.centerPosPx:" + centerPosPx);
-            d.ci("addImage.pictWidthPx:" + pictWidthPx + ", cellWidthPx:" + cellWidthPx + ", centerPosPx:" + centerPosPx);
+        //get calculate width center 
+        var pictWidthPx = pict.getImageDimension().width;
+        d.ci("addImage.pictWidthPx:" + pictWidthPx);
+        var cellWidthPx = IntStream.range(0, colspan)
+                .mapToLong(ci -> Math.round(DEFAULT_COLUMNWIDTH_INPX()))
+                .sum();
+        d.ci("addImage.cellWidthPx:" + cellWidthPx);
+        var centerPosPx = Math.round(cellWidthPx / 2d - pictWidthPx / 2d);
+        d.ci("addImage.centerPosPx:" + centerPosPx);
+        d.ci("addImage.pictWidthPx:" + pictWidthPx + ", cellWidthPx:" + cellWidthPx + ", centerPosPx:" + centerPosPx);
 
-            //determine the new first anchor column dependent of the center position 
-            //and the remaining pixels as Dx
-            var anchorCol1 = 0;
-            for (var ci = 0; ci < colspan; ci++) {
-                if (Math.round(DEFAULT_COLUMNWIDTH_INPX()) < centerPosPx) {
-                    centerPosPx -= Math.round(DEFAULT_COLUMNWIDTH_INPX());
-                    anchorCol1 = ci + 1;
-                } else {
-                    break;
-                }
+        //determine the new first anchor column dependent of the center position 
+        //and the remaining pixels as Dx
+        var anchorCol1 = 0;
+        for (var ci = 0; ci < colspan; ci++) {
+            if (Math.round(DEFAULT_COLUMNWIDTH_INPX()) < centerPosPx) {
+                centerPosPx -= Math.round(DEFAULT_COLUMNWIDTH_INPX());
+                anchorCol1 = ci + 1;
+            } else {
+                break;
             }
-            d.ci("addImage.anchorCol1:" + anchorCol1);
-            d.ci("addImage.centerPosPx:" + centerPosPx);
+        }
+        d.ci("addImage.anchorCol1:" + anchorCol1);
+        d.ci("addImage.centerPosPx:" + centerPosPx);
 
-            anchor.setCol1(anchorCol1 < 0 ? 0 : anchorCol1);//set the new upper left anchor position
-            anchor.setDx1((int) (centerPosPx * Units.EMU_PER_PIXEL));//set the remaining pixels up to the center position as Dx in unit EMU
-            pict.resize(); //resize the pictutre to original size again; this will determine the new bottom rigth anchor position
-            d.ci("addImage.END");
-        });
+        anchor.setCol1(anchorCol1 < 0 ? 0 : anchorCol1);//set the new upper left anchor position
+        anchor.setDx1((int) (centerPosPx * Units.EMU_PER_PIXEL));//set the remaining pixels up to the center position as Dx in unit EMU
+        pict.resize(); //resize the pictutre to original size again; this will determine the new bottom rigth anchor position
+        d.ci("addImage.END");
+        return TGS_UnionExcuseVoid.ofVoid();
     }
 
     public void setCell(int ri, int ci, CellStyle cs, List<Font> font, List<String> text) {
