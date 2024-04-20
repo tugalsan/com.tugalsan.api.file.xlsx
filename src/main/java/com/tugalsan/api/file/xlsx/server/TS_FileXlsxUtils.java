@@ -382,7 +382,7 @@ public class TS_FileXlsxUtils implements Closeable {
             if (ignoreExceptions) {
                 return null;
             }
-            return TGS_UnSafe.thrwReturns(e);
+            return TGS_UnSafe.thrw(e);
         });
     }
 
@@ -425,7 +425,7 @@ public class TS_FileXlsxUtils implements Closeable {
             if (ignoreExceptions) {
                 return;
             }
-            TGS_UnSafe.thrwReturns(e);
+            TGS_UnSafe.thrw(e);
         });
     }
 
@@ -444,7 +444,7 @@ public class TS_FileXlsxUtils implements Closeable {
             if (ignoreExceptions) {
                 return;
             }
-            TGS_UnSafe.thrwReturns(e);
+            TGS_UnSafe.thrw(e);
         });
     }
 
