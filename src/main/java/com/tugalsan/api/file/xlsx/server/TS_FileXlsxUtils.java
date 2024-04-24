@@ -451,7 +451,7 @@ public class TS_FileXlsxUtils implements Closeable {
     public void addImage(CharSequence imgFile, int rowIdx, int colIdx, int colspan) {
         TGS_UnSafe.run(() -> {
             var imgFileStr = imgFile.toString();
-            var imgFileStrLc = TGS_CharSetCast.toLocaleLowerCase(imgFileStr);
+            var imgFileStrLc = TGS_CharSet.cmn().languageDefault().toLowerCase(imgFileStr);
             var format = TGS_Coronator.ofInt()
                     .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".emf"), val -> Workbook.PICTURE_TYPE_EMF)
                     .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".wmf"), val -> Workbook.PICTURE_TYPE_WMF)
