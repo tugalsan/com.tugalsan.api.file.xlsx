@@ -1,6 +1,7 @@
 package com.tugalsan.api.file.xlsx.server;
 
 import com.tugalsan.api.charset.client.TGS_CharSet;
+import com.tugalsan.api.charset.client.TGS_CharSetCast;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.IntStream;
@@ -47,7 +48,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
                 var HTML_TR_E = "</tr>";
                 var HTML_TD_S = "<td>";
                 var HTML_TD_E = "</td>";
-                var isXLS = TGS_CharSet.cmn().languageDefault().toLowerCase(destXLSX.toAbsolutePath().toString()).endsWith(FILE_TYPES[0]);
+                var isXLS = TGS_CharSetCast.current().toLowerCase(destXLSX.toAbsolutePath().toString()).endsWith(FILE_TYPES[0]);
                 if (isXLS) {
                     try (var workbook = new HSSFWorkbook(is);) {
                         var sb = new StringBuffer();
