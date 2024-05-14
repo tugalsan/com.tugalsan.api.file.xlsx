@@ -16,12 +16,13 @@ import com.tugalsan.api.string.client.*;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.list.client.*;
 import com.tugalsan.api.runnable.client.TGS_RunnableType1;
+import com.tugalsan.api.union.client.TGS_UnionExcuseVoid;
 import com.tugalsan.api.unsafe.client.*;
 import com.tugalsan.api.url.client.*;
 
 public class TS_FileXlsx extends TS_FileCommonAbstract {
 
-    final private static TS_Log d = TS_Log.of( TS_FileXlsx.class);
+    final private static TS_Log d = TS_Log.of(TS_FileXlsx.class);
 
     private static int FONT_HEIGHT_OFFSET() {
         return -2;
@@ -188,13 +189,13 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                     IntStream.range(0, tags.size()).forEachOrdered(j -> {
                         var tag = tags.get(j);
                         var dbl = TGS_StringDouble.of(text);
-                        if (dbl.isEmpty()) {
+                        if (dbl.isExcuse()) {
                             lastCell.texts.add(tag);
                             lastCell.fonts.add(currentFont);
                         } else {
-                            lastCell.texts.add(String.valueOf(dbl.get().left));
+                            lastCell.texts.add(String.valueOf(dbl.value().left));
                             lastCell.fonts.add(currentFont);
-                            lastCell.texts.add(String.valueOf(dbl.get().dim()) + String.valueOf(dbl.get().right));
+                            lastCell.texts.add(String.valueOf(dbl.value().dim()) + String.valueOf(dbl.value().right));
                             lastCell.fonts.add(currentFont_half);
                         }
                         if (tags.size() - 1 != j) {
@@ -264,7 +265,11 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
         if (xlsx == null) {
             d.ci("XLSX File is null");
         } else {
-            saveFile_close();
+            var u = saveFile_close();
+            if (u.isExcuse()) {
+                d.ce("compileFile.ERROR: MIFXLSX.close -> " + u.excuse().getMessage());
+                u.excuse().printStackTrace();
+            }
             if (TS_FileUtils.isExistFile(xlsx.getFile())) {
                 d.ci("saveFile.FIX: XLSX File save", xlsx.getFile(), "successfull");
             } else {
@@ -476,8 +481,8 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
         return true;
     }
 
-    private void saveFile_close() {
-        TGS_UnSafe.run(() -> {
+    private TGS_UnionExcuseVoid saveFile_close() {
+        return TGS_UnSafe.call(() -> {
             d.ci("compileFile.*** adding last line...");
             beginText(0);
             addText("");
@@ -586,10 +591,12 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
 
             d.ci("compileFile.*** double xlsx.close();...");
             xlsx.close();
+            return TGS_UnionExcuseVoid.ofVoid();
         }, e -> {
-            d.ce("compileFile.ERROR: MIFXLSX.close -> " + e.getMessage());
-            e.printStackTrace();
-            TGS_UnSafe.run(() -> xlsx.close(), e2 -> e2.printStackTrace());
+            TGS_UnSafe.run(() -> xlsx.close(), e2 -> {
+                //DO NOTHING
+            });
+            return TGS_UnionExcuseVoid.ofExcuse(e);
         });
     }
 
