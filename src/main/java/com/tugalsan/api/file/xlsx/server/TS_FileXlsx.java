@@ -1,5 +1,6 @@
 package com.tugalsan.api.file.xlsx.server;
 
+import com.tugalsan.api.callable.client.TGS_CallableType1Void;
 import com.tugalsan.api.file.common.server.TS_FileCommonAbstract;
 import com.tugalsan.api.file.common.server.TS_FileCommonFontTags;
 import com.tugalsan.api.file.common.server.TS_FileCommonConfig;
@@ -15,7 +16,7 @@ import com.tugalsan.api.math.client.*;
 import com.tugalsan.api.string.client.*;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.list.client.*;
-import com.tugalsan.api.runnable.client.TGS_RunnableType1;
+
 import com.tugalsan.api.union.client.TGS_UnionExcuseVoid;
 import com.tugalsan.api.unsafe.client.*;
 import com.tugalsan.api.url.client.*;
@@ -48,7 +49,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
         super(enabled, localFile, remoteFile);
     }
 
-    public static void use(boolean enabled, TS_FileCommonConfig fileCommonConfig, Path localFile, TGS_Url remoteFile, TGS_RunnableType1<TS_FileXlsx> xlsx) {
+    public static void use(boolean enabled, TS_FileCommonConfig fileCommonConfig, Path localFile, TGS_Url remoteFile, TGS_CallableType1Void<TS_FileXlsx> xlsx) {
         var instance = new TS_FileXlsx(enabled, localFile, remoteFile);
         try {
             instance.use_init(fileCommonConfig);
