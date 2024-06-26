@@ -277,7 +277,7 @@ public class TS_FileXlsxUtils implements Closeable {
 
     public RichTextString createRichText(CharSequence text, Font font) {
         var textStr = text.toString();
-        textStr = textStr.length() > CELL_TEXT_MAX_CHAR_SIZE() ? TGS_StringUtils.concat(textStr.substring(0, CELL_TEXT_MAX_CHAR_SIZE() - 3), "...") : textStr;
+        textStr = textStr.length() > CELL_TEXT_MAX_CHAR_SIZE() ? TGS_StringUtils.cmn().concat(textStr.substring(0, CELL_TEXT_MAX_CHAR_SIZE() - 3), "...") : textStr;
         var rts = creationHelper.createRichTextString(textStr);
         rts.applyFont(font);
         return rts;
@@ -314,7 +314,7 @@ public class TS_FileXlsxUtils implements Closeable {
     }
 
     public void setCellHyperlink(Cell cell, CharSequence strhttp, CharSequence strName) {
-        cell.setCellFormula(TGS_StringUtils.concat("HYPERLINK(\"", strhttp, "\",\"" + strName, "\")"));
+        cell.setCellFormula(TGS_StringUtils.cmn().concat("HYPERLINK(\"", strhttp, "\",\"" + strName, "\")"));
     }
 
     public void setFontSize(Font font, int height) {

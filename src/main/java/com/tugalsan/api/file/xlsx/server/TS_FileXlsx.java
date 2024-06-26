@@ -4,7 +4,7 @@ import com.tugalsan.api.callable.client.TGS_CallableType1_Run;
 import com.tugalsan.api.file.common.server.TS_FileCommonAbstract;
 import com.tugalsan.api.file.common.server.TS_FileCommonFontTags;
 import com.tugalsan.api.file.common.server.TS_FileCommonConfig;
-import com.tugalsan.api.string.server.*;
+import com.tugalsan.api.string.client.*;
 import com.tugalsan.api.file.server.*;
 import com.tugalsan.api.cast.client.*;
 import java.awt.image.*;
@@ -177,7 +177,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
         }
 //        d.infoEnable = true;
         d.ci("addText", text);
-        var lines = TS_StringUtils.toList(text, "\n");
+        var lines = TGS_StringUtils.jre().toList(text, "\n");
         IntStream.range(0, lines.size()).forEachOrdered(i -> {
             var line = lines.get(i);
             if (!line.isEmpty()) {
@@ -186,7 +186,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                     lastCell.texts.add(line);
                     lastCell.fonts.add(currentFont);
                 } else {
-                    var tags = TS_StringUtils.toList_spc(line);
+                    var tags = TGS_StringUtils.jre().toList_spc(line);
                     IntStream.range(0, tags.size()).forEachOrdered(j -> {
                         var tag = tags.get(j);
                         var dbl = TGS_StringDouble.of(text);
@@ -290,7 +290,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
             return false;
         }
         this.table_relColSizes = TGS_MathUtils.convertWeighted(relColSizes, 1, xlsx.getMaxPageColumnCount());
-        d.ci("beginTable.PST relColSizes: " + TGS_StringUtils.toString(table_relColSizes, ", "));
+        d.ci("beginTable.PST relColSizes: " + TGS_StringUtils.cmn().toString(table_relColSizes, ", "));
         table = TGS_ListTable.of(false);
         currentRowIndex = 0;
         currentColXLSXIndex = 0;
@@ -397,8 +397,8 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                         d.ci("calcColRelIndex.iisString.isEmpty");
                         break;
                     } else {//starts with CELL_FULL
-                        var tokens = TS_StringUtils.toList_spc(ins);
-                        d.ci("calcColRelIndex.iisString.isFull.tokens:" + TGS_StringUtils.toString(tokens, ","));
+                        var tokens = TGS_StringUtils.jre().toList_spc(ins);
+                        d.ci("calcColRelIndex.iisString.isFull.tokens:" + TGS_StringUtils.cmn().toString(tokens, ","));
                         if (tokens.size() == 1) {
                             d.ci("calcColRelIndex.iisString.isFull.skipped");
                         } else {
