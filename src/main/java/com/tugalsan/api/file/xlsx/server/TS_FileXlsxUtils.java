@@ -1,7 +1,7 @@
 package com.tugalsan.api.file.xlsx.server;
 
+import com.tugalsan.api.callable.client.TGS_CallableType1_Coronator;
 import com.tugalsan.api.charset.client.*;
-import com.tugalsan.api.coronator.client.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -452,7 +452,7 @@ public class TS_FileXlsxUtils implements Closeable {
         TGS_UnSafe.run(() -> {
             var imgFileStr = imgFile.toString();
             var imgFileStrLc = TGS_CharSetCast.current().toLowerCase(imgFileStr);
-            var format = TGS_Coronator.ofInt()
+            var format = TGS_CallableType1_Coronator.ofInt()
                     .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".emf"), val -> Workbook.PICTURE_TYPE_EMF)
                     .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".wmf"), val -> Workbook.PICTURE_TYPE_WMF)
                     .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".png"), val -> Workbook.PICTURE_TYPE_PNG)

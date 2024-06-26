@@ -8,9 +8,9 @@ module com.tugalsan.api.file.xlsx {
     requires com.tugalsan.api.union;
     requires com.tugalsan.api.cast;
     requires com.tugalsan.api.unsafe;
-    requires com.tugalsan.api.validator;
+    
     requires com.tugalsan.api.math;
-    requires com.tugalsan.api.coronator;
+    
     requires com.tugalsan.api.callable;
     
     requires com.tugalsan.api.log;
