@@ -11,7 +11,7 @@ module com.tugalsan.api.file.xlsx {
     
     requires com.tugalsan.api.math;
     
-    requires com.tugalsan.api.callable;
+    requires com.tugalsan.api.function;
     
     requires com.tugalsan.api.log;
     requires com.tugalsan.api.string;
