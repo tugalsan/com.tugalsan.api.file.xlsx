@@ -13,7 +13,6 @@ import java.util.*;
 import java.util.stream.*;
 import org.apache.poi.ss.usermodel.*;
 import com.tugalsan.api.math.client.*;
-import com.tugalsan.api.string.client.*;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.list.client.*;
 
