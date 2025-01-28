@@ -9,24 +9,30 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>4.1.2</version><!--not 5!-->
+            <version>5.4.0</version><!-- working 4.1.2-->
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <exclusions>
+            <!-- <exclusions>
                 <exclusion>
                     <groupId>org.apache.poi</groupId>
                     <artifactId>poi-ooxml-schemas</artifactId>
                 </exclusion>
-            </exclusions>
-            <version>4.1.2</version><!--not 5!-->
+            </exclusions> -->
+            <version>5.4.0</version><!-- same with poi-->
         </dependency>
-        <dependency><!-- FIX FOR: com.tugalsan.api.file.docx -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>5.4.0</version><!-- same with poi-->
+        </dependency>
+        <!-- <dependency><!- - FIX FOR: org.openxmlformats.schemas.wordprocessingml.x2006.main.STPageOrientation.LANDSCAPE/PORTRAIT in word- ->
             <groupId>org.apache.poi</groupId>
             <artifactId>ooxml-schemas</artifactId>
             <version>1.4</version>
-        </dependency>
+        </dependency>-->
+        
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>com.tugalsan.api.file.html</artifactId>
@@ -66,7 +72,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.3.1</version>
                     <executions>
                         <execution>
                             <id>attach-sources</id>
