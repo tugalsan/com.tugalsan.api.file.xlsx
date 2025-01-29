@@ -30,20 +30,22 @@ public class TS_FileXlsxTable extends TGS_ListTable {
     }
 
     public static TGS_UnionExcuseVoid toFile(TGS_ListTable table, Path destXLSX) {
-        try (var xlsx = new TS_FileXlsxUtils(destXLSX);) {
-            var fBold = xlsx.createFont(true, false, false);
-            var fPlain = xlsx.createFont(false, false, false);
-            IntStream.range(0, table.getRowSize()).forEachOrdered(ri -> {
-                IntStream.range(0, table.getColumnSize(ri)).forEachOrdered(ci -> {
-                    xlsx.setCellRichText(xlsx.getCell(ri, ci), xlsx.createRichText(table.getValueAsString(ri, ci), ri == 0 ? fBold : fPlain));
+        return TGS_UnSafe.call(() -> {
+            try (var xlsx = new TS_FileXlsxUtils(destXLSX);) {
+                var fBold = xlsx.createFont(true, false, false);
+                var fPlain = xlsx.createFont(false, false, false);
+                IntStream.range(0, table.getRowSize()).forEachOrdered(ri -> {
+                    IntStream.range(0, table.getColumnSize(ri)).forEachOrdered(ci -> {
+                        xlsx.setCellRichText(xlsx.getCell(ri, ci), xlsx.createRichText(table.getValueAsString(ri, ci), ri == 0 ? fBold : fPlain));
+                    });
                 });
-            });
-        }
-        if (Files.exists(destXLSX) && !Files.isDirectory(destXLSX)) {
-            return TGS_UnionExcuseVoid.ofVoid();
-        } else {
-            return TGS_UnionExcuseVoid.ofExcuse(d.className, "toFile", "File cannot be created @ " + destXLSX);
-        }
+            }
+            if (Files.exists(destXLSX) && !Files.isDirectory(destXLSX)) {
+                return TGS_UnionExcuseVoid.ofVoid();
+            } else {
+                return TGS_UnionExcuseVoid.ofExcuse(d.className, "toFile", "File cannot be created @ " + destXLSX);
+            }
+        }, e -> TGS_UnionExcuseVoid.ofExcuse(e));
     }
 
     public static StringBuffer toHTML(Path destXLSX, TGS_Url bootLoaderJs) {
