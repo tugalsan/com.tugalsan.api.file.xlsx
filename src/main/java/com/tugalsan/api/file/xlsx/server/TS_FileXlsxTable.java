@@ -42,7 +42,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
         if (Files.exists(destXLSX) && !Files.isDirectory(destXLSX)) {
             return TGS_UnionExcuseVoid.ofVoid();
         } else {
-            return TGS_UnionExcuseVoid.ofExcuse(d.className, "toFile", "File cannot be created");
+            return TGS_UnionExcuseVoid.ofExcuse(d.className, "toFile", "File cannot be created @ " + destXLSX);
         }
     }
 
