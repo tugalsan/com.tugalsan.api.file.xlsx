@@ -19,7 +19,7 @@ import java.util.stream.*;
 
 public class TS_FileXlsxUtils implements Closeable {
 
-    final private static TS_Log d = TS_Log.of( TS_FileXlsxUtils.class);
+    final private static TS_Log d = TS_Log.of(TS_FileXlsxUtils.class);
 
     private static int CELL_TEXT_MAX_CHAR_SIZE() {
         return 32767;
@@ -62,7 +62,8 @@ public class TS_FileXlsxUtils implements Closeable {
 
     public final void setAuthor(CharSequence author) {
         switch (workbook) {
-            case XSSFWorkbook wb -> wb.getProperties().getCoreProperties().setCreator(author.toString());
+            case XSSFWorkbook wb ->
+                wb.getProperties().getCoreProperties().setCreator(author.toString());
             case HSSFWorkbook wb -> {
                 wb.createInformationProperties();
                 wb.getSummaryInformation().setAuthor(author.toString());
@@ -444,6 +445,7 @@ public class TS_FileXlsxUtils implements Closeable {
             if (ignoreExceptions) {
                 return;
             }
+            d.ce("close", e);
             TGS_UnSafe.thrw(e);
         });
     }
