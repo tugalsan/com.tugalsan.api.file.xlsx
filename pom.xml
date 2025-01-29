@@ -30,7 +30,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.18.0</version>
+            <version>2.18.0</version> <!-- poi version 5 needs it, becuase servlet-upload and gwt messes up -->
         </dependency>
         <!-- <dependency><!- - FIX FOR: org.openxmlformats.schemas.wordprocessingml.x2006.main.STPageOrientation.LANDSCAPE/PORTRAIT in word- ->
             <groupId>org.apache.poi</groupId>
