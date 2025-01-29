@@ -8,16 +8,20 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.tugalsan.api.list.client.TGS_ListTable;
 import com.tugalsan.api.file.html.client.TGS_FileHtmlUtils;
+import com.tugalsan.api.log.server.TS_Log;
+import com.tugalsan.api.union.client.TGS_UnionExcuseVoid;
 import com.tugalsan.api.unsafe.client.*;
 import com.tugalsan.api.url.client.TGS_Url;
 
 public class TS_FileXlsxTable extends TGS_ListTable {
 
+    final private static TS_Log d = TS_Log.of(TS_FileXlsxTable.class);
+
     private TS_FileXlsxTable() {
         super(true);
     }
 
-    public boolean toFile(Path destXLSX) {
+    public TGS_UnionExcuseVoid toFile(Path destXLSX) {
         return toFile(this, destXLSX);
     }
 
@@ -25,7 +29,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
         return new TS_FileXlsxTable();
     }
 
-    public static boolean toFile(TGS_ListTable table, Path destXLSX) {
+    public static TGS_UnionExcuseVoid toFile(TGS_ListTable table, Path destXLSX) {
         try (var xlsx = new TS_FileXlsxUtils(destXLSX);) {
             var fBold = xlsx.createFont(true, false, false);
             var fPlain = xlsx.createFont(false, false, false);
@@ -35,7 +39,11 @@ public class TS_FileXlsxTable extends TGS_ListTable {
                 });
             });
         }
-        return Files.exists(destXLSX) && !Files.isDirectory(destXLSX);
+        if (Files.exists(destXLSX) && !Files.isDirectory(destXLSX)) {
+            return TGS_UnionExcuseVoid.ofVoid();
+        } else {
+            return TGS_UnionExcuseVoid.ofExcuse(d.className, "toFile", "File cannot be created");
+        }
     }
 
     public static StringBuffer toHTML(Path destXLSX, TGS_Url bootLoaderJs) {
