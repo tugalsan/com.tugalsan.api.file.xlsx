@@ -15,7 +15,7 @@ import com.tugalsan.api.url.client.TGS_Url;
 
 public class TS_FileXlsxTable extends TGS_ListTable {
 
-    final private static TS_Log d = TS_Log.of(TS_FileXlsxTable.class);
+    final private static TS_Log d = TS_Log.of(true, TS_FileXlsxTable.class);
 
     private TS_FileXlsxTable() {
         super(true);
