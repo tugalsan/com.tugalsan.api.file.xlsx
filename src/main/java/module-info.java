@@ -3,7 +3,8 @@ module com.tugalsan.api.file.xlsx {
     requires org.apache.poi.ooxml;
     requires org.apache.poi.ooxml.schemas;
     requires org.apache.poi.scratchpad;
-
+    requires org.apache.commons.io;
+    
     requires java.desktop;
     requires com.tugalsan.api.list;
     requires com.tugalsan.api.url;
