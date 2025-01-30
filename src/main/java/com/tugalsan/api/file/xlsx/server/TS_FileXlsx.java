@@ -54,6 +54,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
             instance.use_init(fileCommonConfig);
             xlsx.run(instance);
         } catch (Exception e) {
+            TGS_UnSafe.throwIfInterruptedException(e);
             instance.saveFile(e.getMessage());
             throw e;
         } finally {
