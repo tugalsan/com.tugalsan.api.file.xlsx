@@ -24,6 +24,10 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
 
     final private static TS_Log d = TS_Log.of(TS_FileXlsx.class);
 
+    public String getSuperClassName() {
+        return d.className;
+    }
+
     private static int FONT_HEIGHT_OFFSET() {
         return -2;
     }
