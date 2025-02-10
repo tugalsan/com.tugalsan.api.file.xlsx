@@ -1,12 +1,14 @@
 package com.tugalsan.api.file.xlsx.server;
 
-import com.tugalsan.api.function.client.TGS_Func_In1;
+import com.tugalsan.api.function.client.maythrow.uncheckedexceptions.TGS_FuncMTUCE_In1;
 import com.tugalsan.api.file.common.server.TS_FileCommonAbstract;
 import com.tugalsan.api.file.common.server.TS_FileCommonFontTags;
 import com.tugalsan.api.file.common.server.TS_FileCommonConfig;
 import com.tugalsan.api.string.client.*;
 import com.tugalsan.api.file.server.*;
 import com.tugalsan.api.cast.client.*;
+import com.tugalsan.api.function.client.TGS_FuncUtils;
+import com.tugalsan.api.function.client.maythrow.checkedexceptions.TGS_FuncMTCEUtils;
 import java.awt.image.*;
 import java.nio.file.*;
 import java.util.*;
@@ -17,7 +19,7 @@ import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.list.client.*;
 
 import com.tugalsan.api.union.client.TGS_UnionExcuseVoid;
-import com.tugalsan.api.unsafe.client.*;
+
 import com.tugalsan.api.url.client.*;
 
 public class TS_FileXlsx extends TS_FileCommonAbstract {
@@ -52,13 +54,13 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
         super(enabled, localFile, remoteFile);
     }
 
-    public static void use(boolean enabled, TS_FileCommonConfig fileCommonConfig, Path localFile, TGS_Url remoteFile, TGS_Func_In1<TS_FileXlsx> xlsx) {
+    public static void use(boolean enabled, TS_FileCommonConfig fileCommonConfig, Path localFile, TGS_Url remoteFile, TGS_FuncMTUCE_In1<TS_FileXlsx> xlsx) {
         var instance = new TS_FileXlsx(enabled, localFile, remoteFile);
         try {
             instance.use_init(fileCommonConfig);
             xlsx.run(instance);
         } catch (Exception e) {
-            TGS_UnSafe.throwIfInterruptedException(e);
+            TGS_FuncUtils.throwIfInterruptedException(e);
             instance.saveFile(e.getMessage());
             throw e;
         } finally {
@@ -487,7 +489,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
     }
 
     private TGS_UnionExcuseVoid saveFile_close() {
-        return TGS_UnSafe.call(() -> {
+        return TGS_FuncMTCEUtils.call(() -> {
             d.ci("compileFile.*** adding last line...");
             beginText(0);
             addText("");
@@ -598,7 +600,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
             xlsx.close();
             return TGS_UnionExcuseVoid.ofVoid();
         }, e -> {
-            TGS_UnSafe.run(() -> xlsx.close(), e2 -> {
+            TGS_FuncMTCEUtils.run(() -> xlsx.close(), e2 -> {
                 //DO NOTHING
             });
             return TGS_UnionExcuseVoid.ofExcuse(e);

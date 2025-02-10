@@ -11,7 +11,7 @@ module com.tugalsan.api.file.xlsx {
     requires com.tugalsan.api.charset;
     requires com.tugalsan.api.union;
     requires com.tugalsan.api.cast;
-    requires com.tugalsan.api.unsafe;
+    
     requires com.tugalsan.api.math;
     requires com.tugalsan.api.function;
     requires com.tugalsan.api.log;
