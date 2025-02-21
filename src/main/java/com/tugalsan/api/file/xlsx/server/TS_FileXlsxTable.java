@@ -49,7 +49,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
         }, e -> TGS_UnionExcuseVoid.ofExcuse(e));
     }
 
-    public static StringBuffer toHTML(Path destXLSX, TGS_Url bootLoaderJs) {
+    public static StringBuilder toHTML(Path destXLSX, TGS_Url bootLoaderJs) {
         return TGS_FuncMTCEUtils.call(() -> {
             try (var is = Files.newInputStream(destXLSX)) {
                 var FILE_TYPES = new String[]{"xls", "xlsx"};
@@ -61,7 +61,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
                 var isXLS = TGS_CharSetCast.current().toLowerCase(destXLSX.toAbsolutePath().toString()).endsWith(FILE_TYPES[0]);
                 if (isXLS) {
                     try (var workbook = new HSSFWorkbook(is);) {
-                        var sb = new StringBuffer();
+                        var sb = new StringBuilder();
                         sb.append(TGS_FileHtmlUtils.beginLines(destXLSX.toString(), false, 5, 5, null, false, bootLoaderJs));
                         sb.append("<table>");
                         var sheet = workbook.getSheetAt(0);
@@ -84,7 +84,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
                     }
                 }
                 try (var workbook = new XSSFWorkbook(is);) {
-                    var sb = new StringBuffer();
+                    var sb = new StringBuilder();
                     sb.append(TGS_FileHtmlUtils.beginLines(destXLSX.toString(), false, 5, 5, null, false, bootLoaderJs));
                     sb.append("<table>");
                     var sheet = workbook.getSheetAt(0);

@@ -413,7 +413,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                             d.ci("calcColRelIndex.iisString.isFull.@colIdx:" + relColIdx + ".wColPan:" + relColSpan);
                             if (prevrelColIdx == null || !relColIdx.equals(prevrelColIdx)) {
                                 prevrelColIdx = relColIdx;
-                                emptyCellIdx += TGS_CastUtils.toInteger(relColSpan);
+                                emptyCellIdx += TGS_CastUtils.toInteger(relColSpan).orElseThrow();
                                 d.ci("calcColRelIndex.iisString.isFull.emptyCellIdx:" + emptyCellIdx);
                             }
                         }
