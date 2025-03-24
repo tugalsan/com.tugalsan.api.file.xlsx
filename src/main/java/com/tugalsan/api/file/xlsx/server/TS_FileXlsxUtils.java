@@ -1,6 +1,6 @@
 package com.tugalsan.api.file.xlsx.server;
 
-import com.tugalsan.api.function.client.maythrow.uncheckedexceptions.TGS_FuncMTUCEEffectivelyFinal;
+import com.tugalsan.api.function.client.maythrowexceptions.unchecked.TGS_FuncMTUEffectivelyFinal;
 import com.tugalsan.api.charset.client.*;
 import java.io.*;
 import java.nio.file.*;
@@ -13,8 +13,8 @@ import org.apache.poi.xssf.usermodel.*;
 import com.tugalsan.api.list.client.*;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.file.server.*;
-import com.tugalsan.api.function.client.maythrow.checkedexceptions.TGS_FuncMTCEUtils;
-import com.tugalsan.api.function.client.maythrow.uncheckedexceptions.TGS_FuncMTUCEUtils;
+import com.tugalsan.api.function.client.maythrowexceptions.checked.TGS_FuncMTCUtils;
+import com.tugalsan.api.function.client.maythrowexceptions.unchecked.TGS_FuncMTUUtils;
 import com.tugalsan.api.string.client.*;
 
 import java.util.stream.*;
@@ -376,7 +376,7 @@ public class TS_FileXlsxUtils implements Closeable {
     }
 
     public CellRangeAddress createMergedCell(int rowFrom, int rowTo, int colFrom, int colTo, boolean ignoreExceptions) {
-        return TGS_FuncMTCEUtils.call(() -> {
+        return TGS_FuncMTCUtils.call(() -> {
             d.ci("createMergedCell rf:" + rowFrom + ", rt:" + rowTo + ", cf:" + colFrom + ", ct:" + colTo);
             var rangeAddress = new CellRangeAddress(rowFrom, rowTo, colFrom, colTo);
             sheet.addMergedRegion(rangeAddress);
@@ -385,7 +385,7 @@ public class TS_FileXlsxUtils implements Closeable {
             if (ignoreExceptions) {
                 return null;
             }
-            return TGS_FuncMTUCEUtils.thrw(e);
+            return TGS_FuncMTUUtils.thrw(e);
         });
     }
 
@@ -419,7 +419,7 @@ public class TS_FileXlsxUtils implements Closeable {
     }
 
     public void setBordersToMergedCell(CellRangeAddress rangeAddress, boolean ignoreExceptions) {
-        TGS_FuncMTCEUtils.run(() -> {
+        TGS_FuncMTCUtils.run(() -> {
             RegionUtil.setBorderTop(BorderStyle.MEDIUM, rangeAddress, sheet);
             RegionUtil.setBorderLeft(BorderStyle.MEDIUM, rangeAddress, sheet);
             RegionUtil.setBorderRight(BorderStyle.MEDIUM, rangeAddress, sheet);
@@ -428,7 +428,7 @@ public class TS_FileXlsxUtils implements Closeable {
             if (ignoreExceptions) {
                 return;
             }
-            TGS_FuncMTUCEUtils.thrw(e);
+            TGS_FuncMTUUtils.thrw(e);
         });
     }
 
@@ -438,7 +438,7 @@ public class TS_FileXlsxUtils implements Closeable {
     }
 
     public void close(boolean ignoreExceptions) {
-        TGS_FuncMTCEUtils.run(() -> {
+        TGS_FuncMTCUtils.run(() -> {
             try (var fileOut = new FileOutputStream(filePath.toFile())) {
                 workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
                 workbook.write(fileOut);
@@ -448,15 +448,15 @@ public class TS_FileXlsxUtils implements Closeable {
                 return;
             }
             d.ce("close", e);
-            TGS_FuncMTUCEUtils.thrw(e);
+            TGS_FuncMTUUtils.thrw(e);
         });
     }
 
     public void addImage(CharSequence imgFile, int rowIdx, int colIdx, int colspan) {
-        TGS_FuncMTCEUtils.run(() -> {
+        TGS_FuncMTCUtils.run(() -> {
             var imgFileStr = imgFile.toString();
             var imgFileStrLc = TGS_CharSetCast.current().toLowerCase(imgFileStr);
-            var format = TGS_FuncMTUCEEffectivelyFinal.ofInt()
+            var format = TGS_FuncMTUEffectivelyFinal.ofInt()
                     .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".emf"), val -> Workbook.PICTURE_TYPE_EMF)
                     .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".wmf"), val -> Workbook.PICTURE_TYPE_WMF)
                     .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".png"), val -> Workbook.PICTURE_TYPE_PNG)
