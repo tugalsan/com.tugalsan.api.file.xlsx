@@ -9,7 +9,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>5.4.0</version><!-- working 4.1.2-->
+            <version>5.4.1</version><!-- working 4.1.2-->
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -20,17 +20,17 @@
                     <artifactId>poi-ooxml-schemas</artifactId>
                 </exclusion>
             </exclusions> -->
-            <version>5.4.0</version><!-- same with poi-->
+            <version>5.4.1</version><!-- same with poi-->
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-scratchpad</artifactId>
-            <version>5.4.0</version><!-- same with poi-->
+            <version>5.4.1</version><!-- same with poi-->
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.18.0</version> <!-- poi version 5 needs it, becuase servlet-upload and gwt messes up -->
+            <version>2.19.0</version> <!-- poi version 5 needs it, becuase servlet-upload and gwt messes up -->
         </dependency>
         <!-- <dependency><!- - FIX FOR: org.openxmlformats.schemas.wordprocessingml.x2006.main.STPageOrientation.LANDSCAPE/PORTRAIT in word- ->
             <groupId>org.apache.poi</groupId>
