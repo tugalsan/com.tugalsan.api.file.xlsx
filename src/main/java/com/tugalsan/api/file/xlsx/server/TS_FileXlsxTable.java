@@ -16,7 +16,10 @@ import com.tugalsan.api.url.client.TGS_Url;
 
 public class TS_FileXlsxTable extends TGS_ListTable {
 
-    final private static TS_Log d = TS_Log.of(true, TS_FileXlsxTable.class);
+    private static TS_Log d() {
+        return d.orElse(TS_Log.of(TS_FileXlsxTable.class));
+    }
+    final private static StableValue<TS_Log> d = StableValue.of();
 
     private TS_FileXlsxTable() {
         super(true);
@@ -44,7 +47,7 @@ public class TS_FileXlsxTable extends TGS_ListTable {
             if (Files.exists(destXLSX) && !Files.isDirectory(destXLSX)) {
                 return TGS_UnionExcuseVoid.ofVoid();
             } else {
-                return TGS_UnionExcuseVoid.ofExcuse(d.className, "toFile", "File cannot be created @ " + destXLSX);
+                return TGS_UnionExcuseVoid.ofExcuse(d().className, "toFile", "File cannot be created @ " + destXLSX);
             }
         }, e -> TGS_UnionExcuseVoid.ofExcuse(e));
     }
