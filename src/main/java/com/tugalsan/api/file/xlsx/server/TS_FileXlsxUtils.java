@@ -16,13 +16,12 @@ import com.tugalsan.api.file.server.*;
 import com.tugalsan.api.function.client.maythrowexceptions.checked.TGS_FuncMTCUtils;
 import com.tugalsan.api.function.client.maythrowexceptions.unchecked.TGS_FuncMTUUtils;
 import com.tugalsan.api.string.client.*;
-import java.util.function.Supplier;
 
 import java.util.stream.*;
 
 public class TS_FileXlsxUtils implements Closeable {
 
-    final private static Supplier<TS_Log> d = StableValue.supplier(() -> TS_Log.of(TS_FileXlsxUtils.class));
+    final private static TS_Log d = TS_Log.of(TS_FileXlsxUtils.class);
 
     private static int CELL_TEXT_MAX_CHAR_SIZE() {
         return 32767;
@@ -98,15 +97,15 @@ public class TS_FileXlsxUtils implements Closeable {
         switch (pageSizeAX) {
             case 3 -> {
                 sheet.getPrintSetup().setPaperSize(HSSFPrintSetup.A3_PAPERSIZE);
-                d.get().ci("setPageSize", "A", 3);
+                d.ci("setPageSize", "A", 3);
             }
             case 4 -> {
                 sheet.getPrintSetup().setPaperSize(HSSFPrintSetup.A4_PAPERSIZE);
-                d.get().ci("setPageSize", "A", 4);
+                d.ci("setPageSize", "A", 4);
             }
             case 5 -> {
                 sheet.getPrintSetup().setPaperSize(HSSFPrintSetup.A5_PAPERSIZE);
-                d.get().ci("setPageSize", "A", 5);
+                d.ci("setPageSize", "A", 5);
             }
             default -> {
             }
@@ -137,7 +136,7 @@ public class TS_FileXlsxUtils implements Closeable {
         var charCount = getCharCount(texts);
         var cellSingleRowCapacity = calculateSingleRow_CellCharCapacity(colSpan, colSpan);
         var rowCount = (charCount / cellSingleRowCapacity) + 1;
-        d.get().ci("calculateCellHeight", "maxFontSize", maxFontSize, "singleRowHeight", singleRowHeight,
+        d.ci("calculateCellHeight", "maxFontSize", maxFontSize, "singleRowHeight", singleRowHeight,
                 "charCount", charCount, "cellSingleRowCapacity", cellSingleRowCapacity, "rowCount", rowCount);
         return singleRowHeight * rowCount;
     }
@@ -378,7 +377,7 @@ public class TS_FileXlsxUtils implements Closeable {
 
     public CellRangeAddress createMergedCell(int rowFrom, int rowTo, int colFrom, int colTo, boolean ignoreExceptions) {
         return TGS_FuncMTCUtils.call(() -> {
-            d.get().ci("createMergedCell rf:" + rowFrom + ", rt:" + rowTo + ", cf:" + colFrom + ", ct:" + colTo);
+            d.ci("createMergedCell rf:" + rowFrom + ", rt:" + rowTo + ", cf:" + colFrom + ", ct:" + colTo);
             var rangeAddress = new CellRangeAddress(rowFrom, rowTo, colFrom, colTo);
             sheet.addMergedRegion(rangeAddress);
             return rangeAddress;
@@ -448,7 +447,7 @@ public class TS_FileXlsxUtils implements Closeable {
             if (ignoreExceptions) {
                 return;
             }
-            d.get().ce("close", e);
+            d.ce("close", e);
             TGS_FuncMTUUtils.thrw(e);
         });
     }
@@ -466,12 +465,12 @@ public class TS_FileXlsxUtils implements Closeable {
                     .anointAndCoronateIf(val -> imgFileStrLc.endsWith(".dib") || imgFileStrLc.endsWith(".dıb"), val -> Workbook.PICTURE_TYPE_DIB)
                     .coronate();
             if (format == null) {
-                d.get().ce("addImage.Unsupported picture: " + imgFileStr + ". Expected emf|wmf|pict|jpeg|png|dib|gif|tiff|eps|bmp|wpg");
+                d.ce("addImage.Unsupported picture: " + imgFileStr + ". Expected emf|wmf|pict|jpeg|png|dib|gif|tiff|eps|bmp|wpg");
                 return;
             }
 //        r.setText(imgFile);
 //        r.addBreak();
-            d.get().ci("addImage.INFO: TK_XLSXFile.run.addPicture.BEGIN...");
+            d.ci("addImage.INFO: TK_XLSXFile.run.addPicture.BEGIN...");
             var pictureIdx = workbook.addPicture(TS_FileUtils.read(Path.of(imgFileStr)), format);
 
             var helper = workbook.getCreationHelper();
@@ -482,18 +481,18 @@ public class TS_FileXlsxUtils implements Closeable {
             var drawing = sheet.createDrawingPatriarch();
             var pict = drawing.createPicture(anchor, pictureIdx);
             pict.resize();//resize to original size
-            d.get().ci("addImage: w:" + pict.getImageDimension().getWidth() + ", h:" + pict.getImageDimension().getHeight() + ", l:" + imgFileStr);
+            d.ci("addImage: w:" + pict.getImageDimension().getWidth() + ", h:" + pict.getImageDimension().getHeight() + ", l:" + imgFileStr);
 
             //get calculate width center 
             var pictWidthPx = pict.getImageDimension().width;
-            d.get().ci("addImage.pictWidthPx:" + pictWidthPx);
+            d.ci("addImage.pictWidthPx:" + pictWidthPx);
             var cellWidthPx = IntStream.range(0, colspan)
                     .mapToLong(ci -> Math.round(DEFAULT_COLUMNWIDTH_INPX()))
                     .sum();
-            d.get().ci("addImage.cellWidthPx:" + cellWidthPx);
+            d.ci("addImage.cellWidthPx:" + cellWidthPx);
             var centerPosPx = Math.round(cellWidthPx / 2d - pictWidthPx / 2d);
-            d.get().ci("addImage.centerPosPx:" + centerPosPx);
-            d.get().ci("addImage.pictWidthPx:" + pictWidthPx + ", cellWidthPx:" + cellWidthPx + ", centerPosPx:" + centerPosPx);
+            d.ci("addImage.centerPosPx:" + centerPosPx);
+            d.ci("addImage.pictWidthPx:" + pictWidthPx + ", cellWidthPx:" + cellWidthPx + ", centerPosPx:" + centerPosPx);
 
             //determine the new first anchor column dependent of the center position 
             //and the remaining pixels as Dx
@@ -506,13 +505,13 @@ public class TS_FileXlsxUtils implements Closeable {
                     break;
                 }
             }
-            d.get().ci("addImage.anchorCol1:" + anchorCol1);
-            d.get().ci("addImage.centerPosPx:" + centerPosPx);
+            d.ci("addImage.anchorCol1:" + anchorCol1);
+            d.ci("addImage.centerPosPx:" + centerPosPx);
 
             anchor.setCol1(anchorCol1 < 0 ? 0 : anchorCol1);//set the new upper left anchor position
             anchor.setDx1((int) (centerPosPx * Units.EMU_PER_PIXEL));//set the remaining pixels up to the center position as Dx in unit EMU
             pict.resize(); //resize the pictutre to original size again; this will determine the new bottom rigth anchor position
-            d.get().ci("addImage.END");
+            d.ci("addImage.END");
         });
     }
 

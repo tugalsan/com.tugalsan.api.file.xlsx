@@ -7,7 +7,6 @@ import com.tugalsan.api.file.common.server.TS_FileCommonConfig;
 import com.tugalsan.api.string.client.*;
 import com.tugalsan.api.file.server.*;
 import com.tugalsan.api.cast.client.*;
-import com.tugalsan.api.file.html.server.TS_FileHtmlUtils;
 import com.tugalsan.api.function.client.TGS_FuncUtils;
 import com.tugalsan.api.function.client.maythrowexceptions.checked.TGS_FuncMTCUtils;
 import java.awt.image.*;
@@ -22,15 +21,14 @@ import com.tugalsan.api.list.client.*;
 import com.tugalsan.api.union.client.TGS_UnionExcuseVoid;
 
 import com.tugalsan.api.url.client.*;
-import java.util.function.Supplier;
 
 public class TS_FileXlsx extends TS_FileCommonAbstract {
 
-    final private static Supplier<TS_Log> d = StableValue.supplier(() -> TS_Log.of(TS_FileXlsx.class));
+    final private static TS_Log d = TS_Log.of(TS_FileXlsx.class);
 
     @Override
     public String getSuperClassName() {
-        return d.get().className;
+        return d.className();
     }
 
     private static int FONT_HEIGHT_OFFSET() {
@@ -181,17 +179,17 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
             return true;
         }
         if (lastCell == null) {
-            d.get().ce("addText. why lastCell not exists!");
+            d.ce("addText. why lastCell not exists!");
             return false;
         }
 //        d.infoEnable = true;
-        d.get().ci("addText", text);
+        d.ci("addText", text);
         var lines = TGS_StringUtils.jre().toList(text, "\n");
         IntStream.range(0, lines.size()).forEachOrdered(i -> {
             var line = lines.get(i);
             if (!line.isEmpty()) {
                 if (!TGS_StringDouble.may(text)) {
-                    d.get().ci("addText", "line", "mayNot", line);
+                    d.ci("addText", "line", "mayNot", line);
                     lastCell.texts.add(line);
                     lastCell.fonts.add(currentFont);
                 } else {
@@ -229,7 +227,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
             return true;
         }
         if (table != null) {
-            d.get().ce("createNewPage. why table exists!");
+            d.ce("createNewPage. why table exists!");
             return false;
         }
         if (firstPageTriggered) {
@@ -255,13 +253,13 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
         if (isClosed()) {
             return true;
         }
-        d.get().ci("addImage", "init", "imageLoc", pstImageLoc);
+        d.ci("addImage", "init", "imageLoc", pstImageLoc);
         if (lastCell == null) {
-            d.get().ce("addImage. why lastCell not exists!");
+            d.ce("addImage. why lastCell not exists!");
             return false;
         }
         lastCell.imgFiles.add(pstImageLoc);
-        d.get().ci("addImage", "fin");
+        d.ci("addImage", "fin");
         return true;
     }
 
@@ -271,19 +269,19 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
             return true;
         }
         setClosed();
-        d.get().ci("saveFile.XLSX->");
+        d.ci("saveFile.XLSX->");
         if (xlsx == null) {
-            d.get().ci("XLSX File is null");
+            d.ci("XLSX File is null");
         } else {
             var u = saveFile_close();
             if (u.isExcuse()) {
-                d.get().ce("compileFile.ERROR: MIFXLSX.close -> " + u.excuse().getMessage());
+                d.ce("compileFile.ERROR: MIFXLSX.close -> " + u.excuse().getMessage());
                 u.excuse().printStackTrace();
             }
             if (TS_FileUtils.isExistFile(xlsx.getFile())) {
-                d.get().ci("saveFile.FIX: XLSX File save", xlsx.getFile(), "successfull");
+                d.ci("saveFile.FIX: XLSX File save", xlsx.getFile(), "successfull");
             } else {
-                d.get().ce("saveFile.FIX: XLSX File save", xlsx.getFile(), "failed");
+                d.ce("saveFile.FIX: XLSX File save", xlsx.getFile(), "failed");
             }
         }
         return errorSource == null;
@@ -295,17 +293,17 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
             return true;
         }
         if (table != null) {
-            d.get().ce("beginTable.ERROR: MIFXLSX.beginTableCell -> why table exists!");
+            d.ce("beginTable.ERROR: MIFXLSX.beginTableCell -> why table exists!");
             return false;
         }
         this.table_relColSizes = TGS_MathUtils.convertWeighted(relColSizes, 1, xlsx.getMaxPageColumnCount());
-        d.get().ci("beginTable.PST relColSizes: " + TGS_StringUtils.cmn().toString(table_relColSizes, ", "));
+        d.ci("beginTable.PST relColSizes: " + TGS_StringUtils.cmn().toString(table_relColSizes, ", "));
         table = TGS_ListTable.of(false);
         currentRowIndex = 0;
         currentColXLSXIndex = 0;
         currentColRelIndex = 0;
-        d.get().ci("beginTable.currentColRelIndex:", currentColRelIndex);
-        d.get().ci("beginTable.currentColXLSXIndex:", currentColXLSXIndex);
+        d.ci("beginTable.currentColRelIndex:", currentColRelIndex);
+        d.ci("beginTable.currentColXLSXIndex:", currentColXLSXIndex);
         if (table.getColumnSize(currentRowIndex) < relColSizes.length) {
             for (var ci = 0; ci < relColSizes.length; ci++) {
                 if (table.getValueAsObject(currentRowIndex, ci) == null) {
@@ -351,18 +349,18 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
         }
         while (true) {
             currentColXLSXIndex = findMeAndEmptyCell(currentRowIndex);
-            d.get().ci("beginTableCell.currentRowIndex0:", currentRowIndex);
+            d.ci("beginTableCell.currentRowIndex0:", currentRowIndex);
             if (currentColXLSXIndex >= xlsx.getMaxPageColumnCount()) {
                 currentRowIndex++;
-                d.get().ci("beginTableCell.currentRowIndex1:", currentRowIndex);
+                d.ci("beginTableCell.currentRowIndex1:", currentRowIndex);
             } else {
                 break;
             }
         }
         currentColXLSXIndex = findMeAndEmptyCell(currentRowIndex);
-        d.get().ci("beginTableCell.currentColXLSXIndex2:", currentColXLSXIndex);
+        d.ci("beginTableCell.currentColXLSXIndex2:", currentColXLSXIndex);
         currentColRelIndex = calcColRelIndex(currentRowIndex);
-        d.get().ci("beginTableCell.currentColRelIndex2:", currentColRelIndex);
+        d.ci("beginTableCell.currentColRelIndex2:", currentColRelIndex);
 
         var colSpanSize = 0;
         for (var ci = currentColRelIndex; ci < currentColRelIndex + colSpan; ci++) {
@@ -372,7 +370,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                 colSpanSize += table_relColSizes[ci];
             }
         }
-        d.get().ci("beginTableCell.colSpanSize:", colSpanSize);
+        d.ci("beginTableCell.colSpanSize:", colSpanSize);
 
         var fcurrentColXLSXIndex = currentColXLSXIndex;
         var fcolSpanSize = colSpanSize;
@@ -383,7 +381,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                 } else {
                     table.setValue(ri, ci, CELL_Occupied + " " + currentColRelIndex + " " + colSpan);
                 }
-                d.get().ci("beginTableCell.CELL_FULL ri:" + ri + ", ci:" + ci);
+                d.ci("beginTableCell.CELL_FULL ri:" + ri + ", ci:" + ci);
             });
         });
         lastCell = new TS_MIFXLSX_RichCell(xlsx, fileCommonConfig, rowSpan, colSpan, cellHeight, colSpanSize);
@@ -398,36 +396,36 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
         }
         String prevrelColIdx = null;
         for (var ci = 0; ci < table.getColumnSize(rowIdx); ci++) {
-            d.get().ci("calcColRelIndex.ci:" + ci);
+            d.ci("calcColRelIndex.ci:" + ci);
             var o = table.getValueAsObject(rowIdx, ci);
             switch (o) {
                 case String ins -> {
                     if (CELL_Vacant.equals(ins)) {
-                        d.get().ci("calcColRelIndex.iisString.isEmpty");
+                        d.ci("calcColRelIndex.iisString.isEmpty");
                         break;
                     } else {//starts with CELL_FULL
                         var tokens = TGS_StringUtils.jre().toList_spc(ins);
-                        d.get().ci("calcColRelIndex.iisString.isFull.tokens:" + TGS_StringUtils.cmn().toString(tokens, ","));
+                        d.ci("calcColRelIndex.iisString.isFull.tokens:" + TGS_StringUtils.cmn().toString(tokens, ","));
                         if (tokens.size() == 1) {
-                            d.get().ci("calcColRelIndex.iisString.isFull.skipped");
+                            d.ci("calcColRelIndex.iisString.isFull.skipped");
                         } else {
                             var relColIdx = tokens.get(1);
                             var relColSpan = tokens.get(2);
-                            d.get().ci("calcColRelIndex.iisString.isFull.@colIdx:" + relColIdx + ".wColPan:" + relColSpan);
+                            d.ci("calcColRelIndex.iisString.isFull.@colIdx:" + relColIdx + ".wColPan:" + relColSpan);
                             if (prevrelColIdx == null || !relColIdx.equals(prevrelColIdx)) {
                                 prevrelColIdx = relColIdx;
                                 emptyCellIdx += TGS_CastUtils.toInteger(relColSpan).orElseThrow();
-                                d.get().ci("calcColRelIndex.iisString.isFull.emptyCellIdx:" + emptyCellIdx);
+                                d.ci("calcColRelIndex.iisString.isFull.emptyCellIdx:" + emptyCellIdx);
                             }
                         }
                     }
                 }
                 case TS_MIFXLSX_RichCell ins -> {
                     emptyCellIdx += ins.colSpan;
-                    d.get().ci("calcColRelIndex.iisString.isRich.emptyCellIdx:" + emptyCellIdx);
+                    d.ci("calcColRelIndex.iisString.isRich.emptyCellIdx:" + emptyCellIdx);
                 }
                 default ->
-                    d.get().ci("calcColRelIndex.iisString.isERROR.o:" + o);
+                    d.ci("calcColRelIndex.iisString.isERROR.o:" + o);
             }
         }
         return emptyCellIdx;
@@ -449,9 +447,9 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
         }
         currentColRelIndex = calcColRelIndex(currentRowIndex);
 //        currentColRelIndex += lastCell.colSpan;
-        d.get().ci("endTableCell.currentColRelIndex:" + currentColRelIndex);
-        d.get().ci("endTableCell.colSpanSize:" + colSpanSize);
-        d.get().ci("endTableCell.currentColXLSXIndex:" + currentColXLSXIndex);
+        d.ci("endTableCell.currentColRelIndex:" + currentColRelIndex);
+        d.ci("endTableCell.colSpanSize:" + colSpanSize);
+        d.ci("endTableCell.currentColXLSXIndex:" + currentColXLSXIndex);
         lastCell = null;
         return true;
     }
@@ -463,7 +461,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
         }
         if (table == null) {
             if (lastCell != null) {
-                d.get().ce("beginText why lastCell exists!");
+                d.ce("beginText why lastCell exists!");
                 return false;
             }
             lastCell = new TS_MIFXLSX_RichCell(xlsx, fileCommonConfig, null, null, null, null);
@@ -472,7 +470,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
             return true;
         } else {
             if (lastCell == null) {
-                d.get().ce("beginText why lastCell not exists!");
+                d.ce("beginText why lastCell not exists!");
                 return false;
             }
             lastCell.setStyle(allign_Left0_center1_right2_just3, false);
@@ -493,20 +491,20 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
 
     private TGS_UnionExcuseVoid saveFile_close() {
         return TGS_FuncMTCUtils.call(() -> {
-            d.get().ci("compileFile.*** adding last line...");
+            d.ci("compileFile.*** adding last line...");
             beginText(0);
             addText("");
             endText();
 
-            d.get().ci("compileFile.*** xlsx.setPageSize(landscape, pageSizeAX);...");
+            d.ci("compileFile.*** xlsx.setPageSize(landscape, pageSizeAX);...");
             xlsx.setPageSize(landscape, pageSizeAX);
             var maxPageColumnCount = xlsx.getMaxPageColumnCount();
 
-            d.get().ci("compileFile.*** double for.start...");
+            d.ci("compileFile.*** double for.start...");
 
             currentRowIndex = 0;
             for (var di = 0; di < doc.size(); di++) {//INC
-                d.get().ci("compileFile.*** for1.di:" + di);
+                d.ci("compileFile.*** for1.di:" + di);
                 switch (doc.get(di)) {
                     case TS_MIFXLSX_RichCell cellDI -> {
                         var xlsxCell = xlsx.getCell(currentRowIndex, 0);
@@ -517,7 +515,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                             xlsx.setBordersToMergedCell(ra, true);
                         }
                         var rowHeight = xlsx.calculateCellHeight(cellDI.texts, cellDI.fonts, maxPageColumnCount);
-                        d.get().ci("compileFile. >>> MIFXLSX.parag.setRowHeight. ri:" + currentRowIndex + ", rh:" + rowHeight);
+                        d.ci("compileFile. >>> MIFXLSX.parag.setRowHeight. ri:" + currentRowIndex + ", rh:" + rowHeight);
                         xlsx.setRowHeight(currentRowIndex, rowHeight);
                         currentRowIndex++;
                     }
@@ -543,17 +541,17 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                                 }
                                 {
                                     var newHeight = xlsx.calculateCellHeight(cell.texts, cell.fonts, cell.colSpan) / cell.rowSpan;
-                                    d.get().ci("compileFile. >>> MIFXLSX.table.calculateCellHeight.newHeight:" + newHeight);
+                                    d.ci("compileFile. >>> MIFXLSX.table.calculateCellHeight.newHeight:" + newHeight);
                                     if (cell.rowSpan > 1) {
-                                        d.get().ci("compileFile. >>> MIFXLSX.table.newHeightsWithRowSpan.add v:" + newHeight + ", rs:" + cell.rowSpan);
+                                        d.ci("compileFile. >>> MIFXLSX.table.newHeightsWithRowSpan.add v:" + newHeight + ", rs:" + cell.rowSpan);
                                         newHeightsWithRowSpan_value.add(newHeight);
                                         newHeightsWithRowSpan_live.add(cell.rowSpan);
                                     } else {
                                         if (newHeight > maxRowHeight) {
                                             maxRowHeight = newHeight;
-                                            d.get().ci("compileFile. >>> MIFXLSX.table.maxRowHeight is chaged:" + maxRowHeight);
+                                            d.ci("compileFile. >>> MIFXLSX.table.maxRowHeight is chaged:" + maxRowHeight);
                                         } else {
-                                            d.get().ci("compileFile. >>> MIFXLSX.table.maxRowHeight is bigger:" + maxRowHeight);
+                                            d.ci("compileFile. >>> MIFXLSX.table.maxRowHeight is bigger:" + maxRowHeight);
                                         }
                                     }
                                 }
@@ -561,22 +559,22 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                             for (var i = 0; i < newHeightsWithRowSpan_value.size(); i++) {//max
                                 var value = newHeightsWithRowSpan_value.get(i);
                                 var live = newHeightsWithRowSpan_live.get(i);
-                                d.get().ci("compileFile. >>> MIFXLSX.table.newHeightsWithRowSpan[" + i + "] v:" + value + ", rs:" + live);
+                                d.ci("compileFile. >>> MIFXLSX.table.newHeightsWithRowSpan[" + i + "] v:" + value + ", rs:" + live);
                                 if (value > maxRowHeight) {
                                     maxRowHeight = value;
-                                    d.get().ci("compileFile. >>> MIFXLSX.table.newHeightsWithRowSpan->maxRowHeight is chaged:" + maxRowHeight);
+                                    d.ci("compileFile. >>> MIFXLSX.table.newHeightsWithRowSpan->maxRowHeight is chaged:" + maxRowHeight);
                                 }
                                 if (live == 1) {
                                     newHeightsWithRowSpan_value.remove(i);
                                     newHeightsWithRowSpan_live.remove(i);
                                     i--;
-                                    d.get().ci("compileFile. >>> MIFXLSX.table.newHeightsWithRowSpan[" + i + "].removed->rs:" + live);
+                                    d.ci("compileFile. >>> MIFXLSX.table.newHeightsWithRowSpan[" + i + "].removed->rs:" + live);
                                 } else {
                                     newHeightsWithRowSpan_live.set(i, live - 1);
-                                    d.get().ci("compileFile. >>> MIFXLSX.table.newHeightsWithRowSpan[" + i + "].decreasedBy1->rs:" + live);
+                                    d.ci("compileFile. >>> MIFXLSX.table.newHeightsWithRowSpan[" + i + "].decreasedBy1->rs:" + live);
                                 }
                             }
-                            d.get().ci("compileFile >>> MIFXLSX.table.setRowHeight. ri:" + currentRowIndex + ", rh:" + maxRowHeight);
+                            d.ci("compileFile >>> MIFXLSX.table.setRowHeight. ri:" + currentRowIndex + ", rh:" + maxRowHeight);
                             xlsx.setRowHeight(currentRowIndex, maxRowHeight);
                             var fRi = ri;
                             IntStream.range(0, ins.getColumnSize(fRi)).forEachOrdered(ci -> {
@@ -587,7 +585,7 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                                 }
                                 var cell = (TS_MIFXLSX_RichCell) o;
                                 IntStream.range(0, cell.imgFiles.size()).forEachOrdered(i -> {
-                                    d.get().ci("compileFile.*** addImage i:" + i);
+                                    d.ci("compileFile.*** addImage i:" + i);
                                     xlsx.addImage(cell.imgFiles.get(i).toAbsolutePath().toString(), currentRowIndex, ci, cell.colSpan);
                                 });
                             });
@@ -595,11 +593,11 @@ public class TS_FileXlsx extends TS_FileCommonAbstract {
                         }
                     }
                     default ->
-                        d.get().ci("compileFile *** MIFXLSX.ERROR. unknown doc.get object: " + doc.get(di));
+                        d.ci("compileFile *** MIFXLSX.ERROR. unknown doc.get object: " + doc.get(di));
                 }
             }
 
-            d.get().ci("compileFile.*** double xlsx.close();...");
+            d.ci("compileFile.*** double xlsx.close();...");
             xlsx.close();
             return TGS_UnionExcuseVoid.ofVoid();
         }, e -> {
